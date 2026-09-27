@@ -3,502 +3,324 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📻 菊池風磨 hoursz 📸まとめ</title>
+  <title>📻 推しラジオ管理ダッシュボード</title>
   <style>
     :root {
-      --primary: #8e24aa;
-      --primary-light: #ba68c8;
-      --primary-bg: #f8f1fa;
-      --accent-pink: #fce4ec;
-      --text-main: #2d2d2d;
+      --bg-color: #f7f3f5;
       --card-bg: #ffffff;
+      --primary: #6d4c41; /* 上品なブラウン/モーヴ系 */
+      --primary-light: #d7ccc8;
+      --accent: #bcaaa4;
+      --text-main: #3e2723;
+      --text-sub: #8d6e63;
+      --border-radius: 20px;
     }
 
     body {
-      background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
-      padding: 25px;
+      padding: 30px;
       padding-bottom: 120px;
       color: var(--text-main);
     }
 
-    .radio-container {
-      max-width: 720px;
+    .container {
+      max-width: 750px;
       margin: 0 auto;
     }
-    
-    /* ヘッダータイトル */
-    .header-box {
-      text-align: center;
-      margin-bottom: 35px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(10px);
-      border-radius: 30px;
-      box-shadow: 0 8px 20px rgba(123, 31, 162, 0.06);
-    }
 
-    h2 { 
-      color: var(--primary); 
-      margin: 0; 
-      font-size: 2.6rem; 
-      letter-spacing: 0.05em;
-      word-break: break-all; 
-    }
-    
-    /* アコーディオンカード */
-    details {
-      background: var(--card-bg);
-      border-radius: 28px;
-      padding: 10px 30px;
+    /* ヘッダー */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 25px;
-      box-shadow: 0 6px 20px rgba(142, 36, 170, 0.07);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
-    details[open] {
-      padding-bottom: 20px;
-    }
-    
-    summary {
-      font-weight: bold;
-      color: var(--primary);
-      padding: 20px 10px;
-      cursor: pointer;
-      outline: none;
-      list-style: none;
+    .app-title {
       font-size: 2.2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    summary::-webkit-details-marker { display: none; }
-    
-    summary::after {
-      content: '＋';
-      font-size: 1.8rem;
-      color: var(--primary-light);
-      background: var(--primary-bg);
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
-
-    details[open] summary::after {
-      content: 'ー';
-      background: var(--accent-pink);
-      transform: rotate(180deg);
-    }
-    
-    /* 項目カード */
-    .card-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 30px 10px;
-      border-top: 2px solid var(--primary-bg);
-      transition: background-color 0.2s;
-    }
-
-    .card-item:hover {
-      background-color: #faf5fb;
-      border-radius: 16px;
-      padding-left: 15px;
-      padding-right: 15px;
-    }
-    
-    .info {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      text-decoration: none;
-    }
-    
-    .date {
-      font-size: 1.5rem;
-      color: #ab47bc;
       font-weight: 700;
-      letter-spacing: 0.05em;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin: 0;
     }
 
-    .title {
-      font-size: 1.9rem;
-      color: #333333;
-      margin-top: 10px;
-      line-height: 1.4;
-      font-weight: 500;
+    .app-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      margin-top: 5px;
     }
-    
-    /* Xボタンの洗練 */
-    .x-btn {
-      background: linear-gradient(135deg, #ba68c8, #8e24aa);
-      color: white;
-      text-decoration: none;
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
+
+    /* 上部タブ切り替え (画像のようなピル型ナビ) */
+    .nav-tabs {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.8rem;
-      margin-left: 20px;
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
+      gap: 10px;
+      margin-bottom: 25px;
+      overflow-x: auto;
+      padding-bottom: 5px;
     }
 
-    .x-btn:hover {
-      transform: scale(1.08);
-      box-shadow: 0 6px 15px rgba(142, 36, 170, 0.4);
-    }
-    
-    /* 管理者用削除ボタン */
-    .admin-delete-btn {
-      display: none;
-      background-color: #ff5252;
-      color: white;
+    .tab-btn {
+      background: #eef2f5;
       border: none;
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      font-size: 1.4rem;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-sub);
       cursor: pointer;
-      margin-left: 12px;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 3px 8px rgba(255, 82, 82, 0.3);
-    }
-    .admin-mode .admin-delete-btn { display: flex; }
-
-    /* 管理者フッター・ログインボタン */
-    .admin-footer-area {
-      text-align: center;
-      margin: 50px 0 20px 0;
-    }
-
-    .admin-toggle-btn {
-      background: rgba(255, 255, 255, 0.9);
-      border: 2px solid var(--primary-light);
-      color: var(--primary);
-      padding: 12px 28px;
-      border-radius: 25px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      white-space: nowrap;
       transition: all 0.2s;
     }
 
-    .admin-toggle-btn:hover {
-      background: var(--primary-bg);
+    .tab-btn.active {
+      background: #3e2723;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(62, 39, 35, 0.2);
     }
 
-    .admin-toggle-btn.logged-in {
-      background-color: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    /* 新規追加フォーム */
-    .form-container {
+    /* 新規追加エリア (管理モード時のみ表示) */
+    .add-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.04);
       display: none;
-      background: #fff;
-      border: 2px solid var(--primary-light);
-      border-radius: 28px;
-      padding: 30px;
-      margin-bottom: 35px;
-      box-shadow: 0 10px 25px rgba(123, 31, 162, 0.1);
-      animation: fadeIn 0.3s ease;
     }
+    .admin-mode .add-card { display: block; }
 
-    .form-container.show { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 1.2rem; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
-    .form-group input, .form-group textarea {
-      width: 100%;
-      padding: 14px 18px;
-      border: 2px solid #e1bee7;
-      border-radius: 14px;
+    .add-card h3 {
       font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--text-main);
+    }
+
+    .form-row {
+      margin-bottom: 15px;
+    }
+
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 1rem;
       box-sizing: border-box;
       outline: none;
-      transition: border-color 0.2s;
-      background: #fcf9fd;
+      background: #fafafa;
+      transition: border 0.2s;
     }
-    .form-group input:focus, .form-group textarea:focus {
-      border-color: var(--primary);
+
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+      border-color: var(--text-main);
       background: #fff;
     }
 
     .submit-btn {
-      background: linear-gradient(135deg, var(--primary-light), var(--primary));
-      color: #fff;
+      background: var(--text-main);
+      color: white;
       border: none;
       width: 100%;
-      padding: 16px;
-      border-radius: 14px;
-      font-size: 1.4rem;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3);
       transition: opacity 0.2s;
     }
-    .submit-btn:hover { opacity: 0.95; }
-    
-    /* フローティング追加ボタン */
-    .floating-add-btn {
-      display: none;
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      background: linear-gradient(135deg, #ba68c8, #7b1fa2);
-      color: #fff;
-      border: none;
-      padding: 18px 28px;
-      border-radius: 35px;
-      font-size: 1.3rem;
-      font-weight: bold;
-      box-shadow: 0 6px 20px rgba(123, 31, 162, 0.4);
-      cursor: pointer;
-      z-index: 999;
-      transition: transform 0.2s;
+    .submit-btn:hover { opacity: 0.9; }
+
+    /* リスト項目カード (画像のデザインを踏襲) */
+    .radio-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.15s;
+      border: 1px solid rgba(0,0,0,0.02);
     }
-    .floating-add-btn:hover { transform: scale(1.05); }
-    .admin-mode .floating-add-btn { display: block; }
+
+    .radio-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .radio-info {
+      flex: 1;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    /* ラジオ番組タグ */
+    .badge-shori { background: #ffebee; color: #c62828; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+    .badge-fuma { background: #f3e5f5; color: #7b1fa2; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+    .badge-shino { background: #e3f2fd; color: #1565c0; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+
+    .card-date {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      color: var(--text-main);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* アクションボタン (Xリンク & 削除) */
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 15px;
+    }
+
+    .x-link-btn {
+      background: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .x-link-btn:hover { background: #e0e0e0; }
+
+    .delete-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: #e57373;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .admin-mode .delete-btn { display: block; }
+
+    /* 管理者フッター */
+    .footer-admin {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .admin-toggle-btn {
+      background: none;
+      border: 1px solid #d7ccc8;
+      color: var(--text-sub);
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .admin-toggle-btn.logged-in {
+      background: var(--text-main);
+      color: white;
+      border-color: var(--text-main);
+    }
   </style>
 </head>
 <body id="body-root">
 
-<div class="radio-container">
-  <div class="header-box">
-    <h2>📻 菊池風磨 hoursz 📸まとめ</h2>
+<div class="container">
+  <!-- ヘッダー -->
+  <div class="header">
+    <div>
+      <h1 class="app-title">Radio log.</h1>
+      <div class="app-subtitle">推しラジオのアーカイブ管理表</div>
+    </div>
   </div>
 
-  <!-- 新規追加フォーム（管理者のみ表示） -->
-  <div class="form-container" id="admin-form">
-    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary); margin-bottom: 20px;">➕ 新規ラジオ放送回を追加</div>
-    <div class="form-group">
-      <label>日付 (例: 26.08.30)</label>
-      <input type="text" id="input-date" placeholder="26.08.30">
+  <!-- タブ切り替えボタン -->
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('ALL', this)">ALL すべて</button>
+    <button class="tab-btn" onclick="switchTab('FUMA', this)">💜 菊池風磨</button>
+    <button class="tab-btn" onclick="switchTab('SHORI', this)">❤️ 勝利 / 原</button>
+    <button class="tab-btn" onclick="switchTab('SHINO', this)">💙 しの</button>
+  </div>
+
+  <!-- 新規追加フォーム（管理者モードでのみ表示） -->
+  <div class="add-card">
+    <h3>＋ 新しい放送回を追加</h3>
+    <div class="form-row">
+      <select id="input-category">
+        <option value="FUMA">菊池風磨</option>
+        <option value="SHORI">勝利 / 原</option>
+        <option value="SHINO">しの</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label>タイトル・内容</label>
-      <textarea id="input-title" rows="3" placeholder="放送内容のタイトルを入力"></textarea>
+    <div class="form-row">
+      <input type="text" id="input-date" placeholder="日付 (例: 26.08.30)">
     </div>
-    <div class="form-group">
-      <label>X (Twitter) のリンクURL</label>
-      <input type="text" id="input-url" placeholder="https://x.com/tokyofm/status/...">
+    <div class="form-row">
+      <textarea id="input-title" rows="2" placeholder="タイトル・内容を入力"></textarea>
     </div>
-    <button class="submit-btn" onclick="addNewItem()">追加する</button>
+    <div class="form-row">
+      <input type="text" id="input-url" placeholder="X (Twitter) のリンクURL">
+    </div>
+    <button class="submit-btn" onclick="addNewRadioItem()">タスクを追加する</button>
   </div>
 
   <!-- リスト表示エリア -->
-  <div id="radio-list-container"></div>
+  <div id="radio-list"></div>
 
-  <!-- 管理者ログインボタン -->
-  <div class="admin-footer-area">
-    <button class="admin-toggle-btn" id="admin-toggle-btn" onclick="toggleAdminLogin()">⚙️ 管理者ログイン</button>
+  <!-- 管理者ログイン切り替え -->
+  <div class="footer-admin">
+    <button class="admin-toggle-btn" id="admin-toggle-btn" onclick="toggleAdmin()">⚙️ 管理者ログイン</button>
   </div>
 </div>
 
-<!-- 画面右下のフローティング追加ボタン -->
-<button class="floating-add-btn" onclick="scrollToForm()">＋ 新規追加</button>
-
 <script>
-  // 初期データ
-  const initialData = [
-    {
-      yearMonth: "2026年 8月",
-      items: [
-        { date: "26.08.23", title: "夏の思い出と最近の近況トーク", url: "https://x.com/tokyofm/status/2091339640762704035?s=46" },
-        { date: "26.08.16", title: "お盆休みの過ごし方とメッセージ", url: "https://x.com/tokyofm/status/2088802925573185931?s=46" },
-        { date: "26.08.09", title: "夏の恒例コーナーと質問回答", url: "https://x.com/tokyofm/status/2086266210598129724?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 7月",
-      items: [
-        { date: "26.07.26", title: "夏フェスや音楽についてのトーク", url: "https://x.com/tokyofm/status/2081192780383346786?s=46" },
-        { date: "26.07.19", title: "リスナーからのリアルな相談にお答え", url: "https://x.com/tokyofm/status/2078656065261211784?s=46" },
-        { date: "26.07.12", title: "最近気になっているモノ・コト", url: "https://x.com/tokyofm/status/2076119350319391166?s=46" },
-        { date: "26.07.05", title: "2026年後半戦の目標と雑談", url: "https://x.com/tokyofm/status/2073582635339665807?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 6月",
-      items: [
-        { date: "26.06.28", title: "\"もしも\"をテーマにトーク！", url: "https://x.com/tokyofm/status/2071045920272081059?s=46" },
-        { date: "26.06.21", title: "境界線について/リスナーからのメッセージ", url: "https://x.com/tokyofm/status/2068509205711999248?s=46" },
-        { date: "26.06.14", title: "不定期コーナー/質問に答えるよ", url: "https://x.com/tokyofm/status/2065972489977737674?s=46" },
-        { date: "26.06.07", title: "質問にたくさん答える回", url: "https://x.com/tokyofm/status/2063435774897660333?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 5月",
-      items: [
-        { date: "26.05.31", title: "仕事悩みから鯉の相談〜自信が無い時に心がける方法", url: "https://x.com/tokyofm/status/2060899059851047030?s=46" },
-        { date: "26.05.24", title: "リフレッシュ方法/誰とでも盛り上がる定番トークネタなど", url: "https://x.com/tokyofm/status/2058362344972108203?s=46" },
-        { date: "26.05.17", title: "緑黄色社会ゲスト回②", url: "https://x.com/tokyofm/status/2055840729344119010?s=46" },
-        { date: "26.05.10", title: "緑黄色社会ゲスト回", url: "https://x.com/tokyofm/status/2053288914891472982?s=46" },
-        { date: "26.05.03", title: "アルバムMOMENTUMの話", url: "https://x.com/tokyofm/status/2050752199785943252?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 4月",
-      items: [
-        { date: "26.04.26", title: "ふまなべ回③", url: "https://x.com/tokyofm/status/2048215484701761921?s=46" },
-        { date: "26.04.19", title: "ふまなべ回②", url: "https://x.com/tokyofm/status/2045678769734902047?s=46" },
-        { date: "26.04.12", title: "ふまなべ回①", url: "https://x.com/tokyofm/status/2043142054503653743?s=46" },
-        { date: "26.04.05", title: "仕事からプライベートまで菊池風磨今年の春は", url: "https://x.com/tokyofm/status/2040605339658117484?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 3月",
-      items: [
-        { date: "26.03.29", title: "思い出の駄菓子・番組1周年振り返り", url: "https://x.com/tokyofm/status/2038068624498241806?s=46" },
-        { date: "26.03.22", title: "人気コーナー回/質問回答", url: "https://x.com/tokyofm/status/2035531909468766460?s=46" },
-        { date: "26.03.15", title: "照れること/大学生時代のトーク", url: "https://x.com/tokyofm/status/2032995194216538621?s=46" },
-        { date: "26.03.08", title: "菊池風磨31歳のトリセツを作るよ", url: "https://x.com/tokyofm/status/2030458479291609233?s=46" },
-        { date: "26.03.01", title: "卒業式の思い出、一人暮らしアドバイス", url: "https://x.com/tokyofm/status/2027921764119163153?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 2月",
-      items: [
-        { date: "26.02.22", title: "ライブ中のステージからの見え方", url: "https://x.com/tokyofm/status/2025385049139581311?s=46" },
-        { date: "26.02.15", title: "ドラマの話/思考整理術", url: "https://x.com/tokyofm/status/2022848334294376497?s=46" },
-        { date: "26.02.08", title: "ソロ写真集/ドームツアーの話", url: "https://x.com/tokyofm/status/2020311619256148070?s=46" },
-        { date: "26.02.01", title: "勝手に菊池研究所/真似したい行動", url: "https://x.com/tokyofm/status/2017774903949464045?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2026年 1月",
-      items: [
-        { date: "26.01.25", title: "日常で直面しがちなピンチの対応策！", url: "https://x.com/tokyofm/status/2015238188827054177?s=46" },
-        { date: "26.01.18", title: "疲れたな〜と感じる瞬間", url: "https://x.com/tokyofm/status/2012701473893736475?s=46" },
-        { date: "26.01.11", title: "受験生へメッセージ", url: "https://x.com/tokyofm/status/2010164758876746000?s=46" },
-        { date: "26.01.04", title: "HANAゲスト回③", url: "https://x.com/tokyofm/status/2007628043754582181?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 12月",
-      items: [
-        { date: "25.12.28", title: "HANAゲスト②", url: "https://x.com/tokyofm/status/2005091328858652930?s=46" },
-        { date: "25.12.21", title: "HANAゲスト回①", url: "https://x.com/tokyofm/status/2002554739498889410?s=46" },
-        { date: "25.12.14", title: "タイプロについて", url: "https://x.com/tokyofm/status/2000017898832634212?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 11月",
-      items: [
-        { date: "25.11.30", title: "お便り回", url: "https://x.com/tokyofm/status/1994944468588663228?s=46" },
-        { date: "25.11.23", title: "渋谷龍太さんゲスト③", url: "https://x.com/tokyofm/status/1992407753424323056?s=46" },
-        { date: "25.11.16", title: "渋谷龍太さんゲスト②", url: "https://x.com/tokyofm/status/1989871038336045186?s=46" },
-        { date: "25.11.09", title: "渋谷龍太さんゲスト①", url: "https://x.com/tokyofm/status/1987334323746242927?s=46" },
-        { date: "25.11.02", title: "最近ハマってる食べ物", url: "https://x.com/tokyofm/status/1984797608309563804?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 10月",
-      items: [
-        { date: "25.10.26", title: "ガチ相談", url: "https://x.com/tokyofm/status/1982260893204574519?s=46" },
-        { date: "25.10.19", title: "平成を振り返る", url: "https://x.com/tokyofm/status/1979724178166006187?s=46" },
-        { date: "25.10.12", title: "timelesz近況・ドラマ裏話", url: "https://x.com/tokyofm/status/1977187463127818514?s=46" },
-        { date: "25.10.05", title: "番組開始半年・10年後の自分", url: "https://x.com/tokyofm/status/1974650747959861408?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 9月",
-      items: [
-        { date: "25.09.28", title: "境界線について", url: "https://x.com/tokyofm/status/1972114033043231061?s=46" },
-        { date: "25.09.21", title: "お守りワード・悩み相談", url: "https://x.com/tokyofm/status/1969577317945991423?s=46" },
-        { date: "25.09.14", title: "サウジアラビア・履歴書", url: "https://x.com/tokyofm/status/1967040603461505487?s=46" },
-        { date: "25.09.07", title: "好きな匂い・夏メッセージ", url: "https://x.com/tokyofm/status/1964503888503197981?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 8月",
-      items: [
-        { date: "25.08.31", title: "勝手に菊池研究所", url: "https://x.com/tokyofm/status/1961967173364244547?s=46" },
-        { date: "25.08.24", title: "timelesz・写真集トーク", url: "https://x.com/tokyofm/status/1959430458477092868?s=46" },
-        { date: "25.08.17", title: "ハマりもの・日用品のこだわり", url: "https://x.com/tokyofm/status/1956893743241412644?s=46" },
-        { date: "25.08.10", title: "お盆・学生時代の夏休み", url: "https://x.com/tokyofm/status/1954357028190667205?s=46" },
-        { date: "25.08.03", title: "夏の過ごし方・ルーティン", url: "https://x.com/tokyofm/status/1951820312812962249?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 7月",
-      items: [
-        { date: "25.07.27", title: "新コーナー開始", url: "https://x.com/tokyofm/status/1949283598068339006?s=46" },
-        { date: "25.07.20", title: "海の日・バスケキャスター", url: "https://x.com/tokyofm/status/1946746882753188009?s=46" },
-        { date: "25.07.13", title: "検索履歴・見られたくないもの", url: "https://x.com/tokyofm/status/1944210167672782984?s=46" },
-        { date: "25.07.06", title: "整理整頓術トーク", url: "https://x.com/tokyofm/status/1941673452756488646?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 6月",
-      items: [
-        { date: "25.06.29", title: "夏トーク・ゆるゆる雑談", url: "https://x.com/tokyofm/status/1939136738116681801?s=46" },
-        { date: "25.06.22", title: "「照れる」・リリー・フランキー", url: "https://x.com/tokyofm/status/1936600022445183136?s=46" },
-        { date: "25.06.15", title: "洗濯・片付けトーク", url: "https://x.com/tokyofm/status/1934063307519881255?s=46" },
-        { date: "25.06.08", title: "FAMオンエア", url: "https://x.com/tokyofm/status/1931526592595108345?s=46" },
-        { date: "25.06.01", title: "焦ったシチュエーション", url: "https://x.com/tokyofm/status/1928989877380542783?s=46" }
-      ]
-    },
-    {
-      yearMonth: "2025年 5月",
-      items: [
-        { date: "25.05.25", title: "ゲスト回iriさん後編", url: "https://x.com/tokyofm/status/1926453162552012945?s=46" },
-        { date: "25.05.18", title: "ゲスト回iriさん前編", url: "https://x.com/tokyofm/status/1923916447128092862?s=46" },
-        { date: "25.05.11", title: "母の日・プライベート話", url: "https://x.com/tokyofm/status/1921395044231020871?s=46" },
-        { date: "25.05.04", title: "真相をお話します・仕事裏話", url: "https://x.com/tokyofm/status/1918843017668018252?s=465" }
-      ]
-    },
-    {
-      yearMonth: "2025年 4月",
-      items: [
-        { date: "25.04.27", title: "真相をお話します・質問回答", url: "https://x.com/tokyofm/status/1916336637933441420?s=46" },
-        { date: "25.04.13", title: "新メンバー5人出演回", url: "https://x.com/tokyofm/status/1911245454559367358?s=46" },
-        { date: "25.04.06", title: "番組開始", url: "https://x.com/tokyofm/status/1908725815355072556?s=46" }
-      ]
-    }
+  // 初期データ（サンプル）
+  const initialRadioData = [
+    { id: 1, category: "FUMA", date: "26.08.23", title: "夏の思い出と最近の近況トーク", url: "https://x.com/tokyofm/status/2091339640762704035?s=46" },
+    { id: 2, category: "FUMA", date: "26.08.16", title: "お盆休みの過ごし方とメッセージ", url: "https://x.com/tokyofm/status/2088802925573185931?s=46" },
+    { id: 3, category: "SHORI", date: "26.08.20", title: "勝利＆原コンビで最近のプライベート語り", url: "https://x.com/" },
+    { id: 4, category: "SHINO", date: "26.08.18", title: "しののラジオ：まったり近況雑談回", url: "https://x.com/" }
   ];
 
   let radioData = [];
-  const saved = localStorage.getItem("fuma_radio_data");
-  if (saved) {
-    try { radioData = JSON.parse(saved); } catch (e) { radioData = initialData; }
+  const savedData = localStorage.getItem("oshi_radio_data_v2");
+  if (savedData) {
+    try { radioData = JSON.parse(savedData); } catch (e) { radioData = initialRadioData; }
   } else {
-    radioData = initialData;
-    saveToStorage();
+    radioData = initialRadioData;
+    saveData();
   }
 
-  let isAdminLoggedIn = sessionStorage.getItem("fuma_admin_logged_in") === "true";
+  let currentFilter = "ALL";
+  let isAdmin = sessionStorage.getItem("oshi_radio_admin") === "true";
 
-  function saveToStorage() {
-    localStorage.setItem("fuma_radio_data", JSON.stringify(radioData));
+  function saveData() {
+    localStorage.setItem("oshi_radio_data_v2", JSON.stringify(radioData));
   }
 
-  function applyAdminUI() {
+  function updateAdminUI() {
     const body = document.getElementById("body-root");
     const btn = document.getElementById("admin-toggle-btn");
-    const form = document.getElementById("admin-form");
-
-    if (isAdminLoggedIn) {
+    if (isAdmin) {
       body.classList.add("admin-mode");
       btn.textContent = "⚙️ 管理者ログアウト";
       btn.classList.add("logged-in");
@@ -506,128 +328,119 @@
       body.classList.remove("admin-mode");
       btn.textContent = "⚙️ 管理者ログイン";
       btn.classList.remove("logged-in");
-      form.classList.remove("show");
     }
     renderList();
   }
 
-  function toggleAdminLogin() {
-    if (!isAdminLoggedIn) {
+  function toggleAdmin() {
+    if (!isAdmin) {
       const pwd = prompt("管理者パスワードを入力してください：");
       if (pwd === "fuma123") {
-        isAdminLoggedIn = true;
-        sessionStorage.setItem("fuma_admin_logged_in", "true");
-        alert("管理者としてログインしました！");
+        isAdmin = true;
+        sessionStorage.setItem("oshi_radio_admin", "true");
+        alert("管理者モードを有効化しました");
       } else if (pwd !== null) {
         alert("パスワードが違います");
         return;
       }
     } else {
       if (confirm("ログアウトしますか？")) {
-        isAdminLoggedIn = false;
-        sessionStorage.removeItem("fuma_admin_logged_in");
+        isAdmin = false;
+        sessionStorage.removeItem("oshi_radio_admin");
         alert("ログアウトしました");
       }
     }
-    applyAdminUI();
+    updateAdminUI();
   }
 
-  function scrollToForm() {
-    const form = document.getElementById("admin-form");
-    form.classList.add("show");
-    form.scrollIntoView({ behavior: 'smooth' });
+  function switchTab(category, element) {
+    currentFilter = category;
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    element.classList.add("active");
+    renderList();
   }
 
-  function addNewItem() {
-    const dateInput = document.getElementById("input-date").value.trim();
-    const titleInput = document.getElementById("input-title").value.trim();
-    const urlInput = document.getElementById("input-url").value.trim();
+  function addNewRadioItem() {
+    const category = document.getElementById("input-category").value;
+    const date = document.getElementById("input-date").value.trim();
+    const title = document.getElementById("input-title").value.trim();
+    const url = document.getElementById("input-url").value.trim();
 
-    if (!dateInput || !titleInput || !urlInput) {
+    if (!date || !title || !url) {
       alert("すべての項目を入力してください！");
       return;
     }
 
-    let yearPart = "2026";
-    let monthPart = "1";
-    
-    if (dateInput.startsWith("25.")) {
-      yearPart = "2025";
-      monthPart = parseInt(dateInput.substring(3, 5), 10);
-    } else if (dateInput.startsWith("26.")) {
-      yearPart = "2026";
-      monthPart = parseInt(dateInput.substring(3, 5), 10);
-    } else {
-      const parts = dateInput.split(/[\.\-\/]/);
-      if (parts.length >= 2) {
-        yearPart = parts[0].length === 2 ? "20" + parts[0] : parts[0];
-        monthPart = parseInt(parts[1], 10);
-      }
-    }
+    const newItem = {
+      id: Date.now(),
+      category,
+      date,
+      title,
+      url
+    };
 
-    const targetYearMonth = `${yearPart}年 ${monthPart}月`;
-
-    let group = radioData.find(g => g.yearMonth === targetYearMonth);
-    if (!group) {
-      group = { yearMonth: targetYearMonth, items: [] };
-      radioData.unshift(group);
-    }
-
-    group.items.unshift({ date: dateInput, title: titleInput, url: urlInput });
-
-    saveToStorage();
+    radioData.unshift(newItem);
+    saveData();
     renderList();
 
+    // フォームクリア
     document.getElementById("input-date").value = "";
     document.getElementById("input-title").value = "";
     document.getElementById("input-url").value = "";
-    document.getElementById("admin-form").classList.remove("show");
-    alert("新しい放送回を追加しました！");
+    alert("追加しました！");
   }
 
-  function deleteItem(ymIndex, itemIndex) {
-    if (!isAdminLoggedIn) return;
+  function deleteItem(id) {
+    if (!isAdmin) return;
     if (confirm("この項目を削除しますか？")) {
-      radioData[ymIndex].items.splice(itemIndex, 1);
-      if (radioData[ymIndex].items.length === 0) {
-        radioData.splice(ymIndex, 1);
-      }
-      saveToStorage();
+      radioData = radioData.filter(item => item.id !== id);
+      saveData();
       renderList();
     }
   }
 
+  function getBadgeHTML(category) {
+    if (category === "FUMA") return `<span class="badge-fuma">菊池風磨</span>`;
+    if (category === "SHORI") return `<span class="badge-shori">勝利 / 原</span>`;
+    if (category === "SHINO") return `<span class="badge-shino">しの</span>`;
+    return "";
+  }
+
   function renderList() {
-    const container = document.getElementById("radio-list-container");
+    const container = document.getElementById("radio-list");
     container.innerHTML = "";
 
-    radioData.forEach((group, ymIndex) => {
-      const details = document.createElement("details");
-      if (ymIndex === 0) details.setAttribute("open", "true");
+    const filtered = currentFilter === "ALL" 
+      ? radioData 
+      : radioData.filter(item => item.category === currentFilter);
 
-      const summary = document.createElement("summary");
-      summary.textContent = group.yearMonth;
-      details.appendChild(summary);
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 30px;">データがありません</div>`;
+      return;
+    }
 
-      group.items.forEach((item, itemIndex) => {
-        const cardItem = document.createElement("div");
-        cardItem.className = "card-item";
-        cardItem.innerHTML = `
-          <a href="${item.url}" target="_blank" class="info">
-            <span class="date">${item.date}</span>
-            <span class="title">${item.title}</span>
-          </a>
-          <a href="${item.url}" target="_blank" class="x-btn">𝕏</a>
-          <button class="admin-delete-btn" onclick="deleteItem(${ymIndex}, ${itemIndex})" title="削除">×</button>
-        `;
-        details.appendChild(cardItem);
-      });
-
-      container.appendChild(details);
+    filtered.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "radio-card";
+      card.innerHTML = `
+        <a href="${item.url}" target="_blank" class="radio-info">
+          <div class="meta-row">
+            ${getBadgeHTML(item.category)}
+            <span class="card-date">${item.date}</span>
+          </div>
+          <div class="card-title">${item.title}</div>
+        </a>
+        <div class="card-actions">
+          <a href="${item.url}" target="_blank" class="x-link-btn" title="Xを開く">𝕏</a>
+          <button class="delete-btn" onclick="deleteItem(${item.id})" title="削除">🗑️</button>
+        </div>
+      `;
+      container.appendChild(card);
     });
   }
 
-  applyAdminUI();
+  // 初期化
+  updateAdminUI();
 </script>
 
 </body>
