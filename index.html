@@ -1,185 +1,451 @@
-<style>
-  body { background-color: #f3e5f5; font-family: sans-serif; margin: 0; padding: 30px; }
-  .radio-container { max-width: 700px; margin: 0 auto; }
-  
-  /* タイトルサイズをさらに拡大 */
-   h2 { 
-    color: #7b1fa2; 
-    text-align: center; 
-    margin-bottom: 30px; 
-    font-size: 3.0rem; /* この数値を大きくするほど文字が大きくなります */
-    word-break: break-all; /* はみ出し防止のため追加しました */
-  }
-  
-  /* カード全体の余白と枠をさらにゆったりと */
-  details { background: white; border-radius: 35px; padding: 35px 45px; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-  
-  /* 年月表示をさらに大きく */
-  summary { font-weight: bold; color: #7b1fa2; padding: 20px 10px; cursor: pointer; outline: none; list-style: none; font-size: 2.5rem; }
-  summary::after { content: ' ▼'; float: right; font-size: 2.0rem; color: #ba68c8; }
-  
-  /* 項目間の余白を拡大 */
-  .card-item { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-top: 2px solid #f3e5f5; }
-  
-  .info { display: flex; flex-direction: column; flex: 1; }
-  
-  /* 日付・タイトルサイズをさらに拡大 */
-  .date { font-size: 1.8rem; color: #9c27b0; font-weight: bold; }
-  .title { font-size: 2.2rem; color: #333; margin-top: 15px; line-height: 1.5; }
-  
-  /* ボタンサイズを拡大 */
-  .x-btn { background-color: #ba68c8; color: white; text-decoration: none; width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.0rem; margin-left: 30px; flex-shrink: 0; }
-</style>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>菊池風磨 hoursz 📸まとめ</title>
+  <style>
+    body { background-color: #f3e5f5; font-family: sans-serif; margin: 0; padding: 30px; padding-bottom: 100px; }
+    .radio-container { max-width: 700px; margin: 0 auto; }
+    
+    /* タイトルサイズ */
+    h2 { 
+      color: #7b1fa2; 
+      text-align: center; 
+      margin-bottom: 30px; 
+      font-size: 3.0rem; 
+      word-break: break-all; 
+    }
+    
+    /* カード全体の余白と枠 */
+    details { background: white; border-radius: 35px; padding: 35px 45px; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    
+    /* 年月表示 */
+    summary { font-weight: bold; color: #7b1fa2; padding: 20px 10px; cursor: pointer; outline: none; list-style: none; font-size: 2.5rem; }
+    summary::after { content: ' ▼'; float: right; font-size: 2.0rem; color: #ba68c8; }
+    
+    /* 項目間の余白 */
+    .card-item { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-top: 2px solid #f3e5f5; position: relative; }
+    
+    .info { display: flex; flex-direction: column; flex: 1; text-decoration: none; }
+    
+    /* 日付・タイトルサイズ */
+    .date { font-size: 1.8rem; color: #9c27b0; font-weight: bold; }
+    .title { font-size: 2.2rem; color: #333; margin-top: 15px; line-height: 1.5; }
+    
+    /* ボタンサイズ */
+    .x-btn { background-color: #ba68c8; color: white; text-decoration: none; width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.0rem; margin-left: 20px; flex-shrink: 0; }
+    
+    /* 管理者用削除ボタン */
+    .admin-delete-btn {
+      display: none;
+      background-color: #e57373;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-left: 15px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .admin-mode .admin-delete-btn { display: flex; }
+
+    /* 管理者フォーム・ボタンのスタイル */
+    .admin-footer-area { text-align: center; margin: 40px 0 20px 0; }
+    .admin-toggle-btn { background: none; border: 1px solid #ba68c8; color: #7b1fa2; padding: 12px 24px; border-radius: 20px; font-size: 1.2rem; cursor: pointer; font-weight: bold; background-color: #fff; }
+    .admin-toggle-btn.logged-in { background-color: #7b1fa2; color: #fff; }
+
+    .form-container {
+      display: none;
+      background: #fff;
+      border: 3px solid #7b1fa2;
+      border-radius: 25px;
+      padding: 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .form-container.show { display: block; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 1.3rem; font-weight: bold; color: #7b1fa2; margin-bottom: 8px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 15px; border: 2px solid #e1bee7; border-radius: 12px; font-size: 1.3rem; box-sizing: border-box; }
+    .submit-btn { background: #7b1fa2; color: #fff; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
+    
+    .floating-add-btn {
+      display: none;
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #7b1fa2;
+      color: #fff;
+      border: none;
+      padding: 20px 30px;
+      border-radius: 40px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(123, 31, 162, 0.4);
+      cursor: pointer;
+      z-index: 999;
+    }
+    .admin-mode .floating-add-btn { display: block; }
+  </style>
+</head>
+<body id="body-root">
 
 <div class="radio-container">
   <h2>📻 菊池風磨hoursz📸まとめ</h2>
 
-  <!-- 2026年 -->
-    <!-- 2026年 8月 -->
-  <details><summary>2026年 8月</summary>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2091339640762704035?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.08.23</span><span class="title">夏の思い出と最近の近況トーク</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2091339640762704035?s=46" target="_blank" class="x-btn">𝕏</a>
+  <!-- 新規追加フォーム（管理者のみ表示） -->
+  <div class="form-container" id="admin-form">
+    <div style="font-size: 1.6rem; font-weight: bold; color: #7b1fa2; margin-bottom: 20px;">➕ 新規ラジオ放送回を追加</div>
+    <div class="form-group">
+      <label>日付 (例: 2026.08.30 または 26.08.30)</label>
+      <input type="text" id="input-date" placeholder="26.08.30">
     </div>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2088802925573185931?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.08.16</span><span class="title">お盆休みの過ごし方とメッセージ</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2088802925573185931?s=46" target="_blank" class="x-btn">𝕏</a>
+    <div class="form-group">
+      <label>タイトル・内容</label>
+      <textarea id="input-title" rows="3" placeholder="放送内容のタイトルを入力"></textarea>
     </div>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2086266210598129724?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.08.09</span><span class="title">夏の恒例コーナーと質問回答</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2086266210598129724?s=46" target="_blank" class="x-btn">𝕏</a>
+    <div class="form-group">
+      <label>X (Twitter) のリンクURL</label>
+      <input type="text" id="input-url" placeholder="https://x.com/tokyofm/status/...">
     </div>
-  </details>
+    <button class="submit-btn" onclick="addNewItem()">追加する</button>
+  </div>
 
-  <!-- 2026年 7月 -->
-  <details><summary>2026年 7月</summary>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2081192780383346786?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.07.26</span><span class="title">夏フェスや音楽についてのトーク</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2081192780383346786?s=46" target="_blank" class="x-btn">𝕏</a>
-    </div>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2078656065261211784?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.07.19</span><span class="title">リスナーからのリアルな相談にお答え</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2078656065261211784?s=46" target="_blank" class="x-btn">𝕏</a>
-    </div>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2076119350319391166?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.07.12</span><span class="title">最近気になっているモノ・コト</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2076119350319391166?s=46" target="_blank" class="x-btn">𝕏</a>
-    </div>
-    <div class="card-item">
-      <a href="https://x.com/tokyofm/status/2073582635339665807?s=46" target="_blank" class="info" style="text-decoration: none;">
-        <span class="date">26.07.05</span><span class="title">2026年後半戦の目標と雑談</span>
-      </a>
-      <a href="https://x.com/tokyofm/status/2073582635339665807?s=46" target="_blank" class="x-btn">𝕏</a>
-    </div>
-  </details>
+  <!-- リスト表示エリア -->
+  <div id="radio-list-container"></div>
 
-    <details><summary>2026年 6月</summary>
-    <div class="card-item"><div class="info"><span class="date">26.06.28</span><span class="title">"もしも"をテーマにトーク！</span></div><a href="https://x.com/tokyofm/status/2071045920272081059?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.06.21</span><span class="title">境界線について/リスナーからのメッセージ</span></div><a href="https://x.com/tokyofm/status/2068509205711999248?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.06.14</span><span class="title">不定期コーナー/質問に答えるよ</span></div><a href="https://x.com/tokyofm/status/2065972489977737674?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.06.07</span><span class="title">質問にたくさん答える回</span></div><a href="https://x.com/tokyofm/status/2063435774897660333?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2026年 5月</summary>
-    <div class="card-item"><div class="info"><span class="date">26.05.31</span><span class="title">仕事悩みから鯉の相談〜自信が無い時に心がける方法</span></div><a href="https://x.com/tokyofm/status/2060899059851047030?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.05.24</span><span class="title">リフレッシュ方法/誰とでも盛り上がる定番トークネタなど</span></div><a href="https://x.com/tokyofm/status/2058362344972108203?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.05.17</span><span class="title">緑黄色社会ゲスト回②</span></div><a href="https://x.com/tokyofm/status/2055840729344119010?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.05.10</span><span class="title">緑黄色社会ゲスト回</span></div><a href="https://x.com/tokyofm/status/2053288914891472982?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.05.03</span><span class="title">アルバムMOMENTUMの話</span></div><a href="https://x.com/tokyofm/status/2050752199785943252?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2026年 4月</summary>
-    <div class="card-item"><div class="info"><span class="date">26.04.26</span><span class="title">ふまなべ回③</span></div><a href="https://x.com/tokyofm/status/2048215484701761921?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.04.19</span><span class="title">ふまなべ回②</span></div><a href="https://x.com/tokyofm/status/2045678769734902047?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.04.12</span><span class="title">ふまなべ回①</span></div><a href="https://x.com/tokyofm/status/2043142054503653743?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.04.05</span><span class="title">仕事からプライベートまで菊池風磨今年の春は</span></div><a href="https://x.com/tokyofm/status/2040605339658117484?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2026年 3月</summary>
-    <div class="card-item"><div class="info"><span class="date">26.03.29</span><span class="title">思い出の駄菓子・番組1周年振り返り</span></div><a href="https://x.com/tokyofm/status/2038068624498241806?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.03.22</span><span class="title">人気コーナー回/質問回答</span></div><a href="https://x.com/tokyofm/status/2035531909468766460?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.03.15</span><span class="title">照れること/大学生時代のトーク</span></div><a href="https://x.com/tokyofm/status/2032995194216538621?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.03.08</span><span class="title">菊池風磨31歳のトリセツを作るよ</span></div><a href="https://x.com/tokyofm/status/2030458479291609233?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.03.01</span><span class="title">卒業式の思い出、一人暮らしアドバイス</span></div><a href="https://x.com/tokyofm/status/2027921764119163153?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2026年 2月</summary>
-    <div class="card-item"><div class="info"><span class="date">26.02.22</span><span class="title">ライブ中のステージからの見え方</span></div><a href="https://x.com/tokyofm/status/2025385049139581311?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.02.15</span><span class="title">ドラマの話/思考整理術</span></div><a href="https://x.com/tokyofm/status/2022848334294376497?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.02.08</span><span class="title">ソロ写真集/ドームツアーの話</span></div><a href="https://x.com/tokyofm/status/2020311619256148070?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.02.01</span><span class="title">勝手に菊池研究所/真似したい行動</span></div><a href="https://x.com/tokyofm/status/2017774903949464045?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2026年 1月</summary>
-    <div class="card-item"><div class="info"><span class="date">26.01.25</span><span class="title">日常で直面しがちなピンチの対応策！</span></div><a href="https://x.com/tokyofm/status/2015238188827054177?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.01.18</span><span class="title">疲れたな〜と感じる瞬間</span></div><a href="https://x.com/tokyofm/status/2012701473893736475?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.01.11</span><span class="title">受験生へメッセージ</span></div><a href="https://x.com/tokyofm/status/2010164758876746000?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">26.01.04</span><span class="title">HANAゲスト回③</span></div><a href="https://x.com/tokyofm/status/2007628043754582181?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-
-  <!-- 2025年 -->
-  <details><summary>2025年 12月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.12.28</span><span class="title">HANAゲスト②</span></div><a href="https://x.com/tokyofm/status/2005091328858652930?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.12.21</span><span class="title">HANAゲスト回①</span></div><a href="https://x.com/tokyofm/status/2002554739498889410?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.12.14</span><span class="title">タイプロについて</span></div><a href="https://x.com/tokyofm/status/2000017898832634212?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 11月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.11.30</span><span class="title">お便り回</span></div><a href="https://x.com/tokyofm/status/1994944468588663228?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.11.23</span><span class="title">渋谷龍太さんゲスト③</span></div><a href="https://x.com/tokyofm/status/1992407753424323056?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.11.16</span><span class="title">渋谷龍太さんゲスト②</span></div><a href="https://x.com/tokyofm/status/1989871038336045186?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.11.09</span><span class="title">渋谷龍太さんゲスト①</span></div><a href="https://x.com/tokyofm/status/1987334323746242927?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.11.02</span><span class="title">最近ハマってる食べ物</span></div><a href="https://x.com/tokyofm/status/1984797608309563804?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 10月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.10.26</span><span class="title">ガチ相談</span></div><a href="https://x.com/tokyofm/status/1982260893204574519?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.10.19</span><span class="title">平成を振り返る</span></div><a href="https://x.com/tokyofm/status/1979724178166006187?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.10.12</span><span class="title">timelesz近況・ドラマ裏話</span></div><a href="https://x.com/tokyofm/status/1977187463127818514?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.10.05</span><span class="title">番組開始半年・10年後の自分</span></div><a href="https://x.com/tokyofm/status/1974650747959861408?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 9月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.09.28</span><span class="title">境界線について</span></div><a href="https://x.com/tokyofm/status/1972114033043231061?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.09.21</span><span class="title">お守りワード・悩み相談</span></div><a href="https://x.com/tokyofm/status/1969577317945991423?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.09.14</span><span class="title">サウジアラビア・履歴書</span></div><a href="https://x.com/tokyofm/status/1967040603461505487?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.09.07</span><span class="title">好きな匂い・夏メッセージ</span></div><a href="https://x.com/tokyofm/status/1964503888503197981?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 8月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.08.31</span><span class="title">勝手に菊池研究所</span></div><a href="https://x.com/tokyofm/status/1961967173364244547?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.08.24</span><span class="title">timelesz・写真集トーク</span></div><a href="https://x.com/tokyofm/status/1959430458477092868?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.08.17</span><span class="title">ハマりもの・日用品のこだわり</span></div><a href="https://x.com/tokyofm/status/1956893743241412644?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.08.10</span><span class="title">お盆・学生時代の夏休み</span></div><a href="https://x.com/tokyofm/status/1954357028190667205?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.08.03</span><span class="title">夏の過ごし方・ルーティン</span></div><a href="https://x.com/tokyofm/status/1951820312812962249?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 7月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.07.27</span><span class="title">新コーナー開始</span></div><a href="https://x.com/tokyofm/status/1949283598068339006?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.07.20</span><span class="title">海の日・バスケキャスター</span></div><a href="https://x.com/tokyofm/status/1946746882753188009?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.07.13</span><span class="title">検索履歴・見られたくないもの</span></div><a href="https://x.com/tokyofm/status/1944210167672782984?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.07.06</span><span class="title">整理整頓術トーク</span></div><a href="https://x.com/tokyofm/status/1941673452756488646?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 6月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.06.29</span><span class="title">夏トーク・ゆるゆる雑談</span></div><a href="https://x.com/tokyofm/status/1939136738116681801?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.06.22</span><span class="title">「照れる」・リリー・フランキー</span></div><a href="https://x.com/tokyofm/status/1936600022445183136?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.06.15</span><span class="title">洗濯・片付けトーク</span></div><a href="https://x.com/tokyofm/status/1934063307519881255?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.06.08</span><span class="title">FAMオンエア</span></div><a href="https://x.com/tokyofm/status/1931526592595108345?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.06.01</span><span class="title">焦ったシチュエーション</span></div><a href="https://x.com/tokyofm/status/1928989877380542783?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 5月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.05.25</span><span class="title">ゲスト回iriさん後編</span></div><a href="https://x.com/tokyofm/status/1926453162552012945?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.05.18</span><span class="title">ゲスト回iriさん前編</span></div><a href="https://x.com/tokyofm/status/1923916447128092862?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.05.11</span><span class="title">母の日・プライベート話</span></div><a href="https://x.com/tokyofm/status/1921395044231020871?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.05.04</span><span class="title">真相をお話します・仕事裏話</span></div><a href="https://x.com/tokyofm/status/1918843017668018252?s=465" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-  <details><summary>2025年 4月</summary>
-    <div class="card-item"><div class="info"><span class="date">25.04.27</span><span class="title">真相をお話します・質問回答</span></div><a href="https://x.com/tokyofm/status/1916336637933441420?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.04.13</span><span class="title">新メンバー5人出演回</span></div><a href="https://x.com/tokyofm/status/1911245454559367358?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    <div class="card-item"><div class="info"><span class="date">25.04.06</span><span class="title">番組開始</span></div><a href="https://x.com/tokyofm/status/1908725815355072556?s=46" target="_blank" class="x-btn">𝕏</a></div>
-  </details>
-
+  <!-- 管理者ログインボタン -->
+  <div class="admin-footer-area">
+    <button class="admin-toggle-btn" id="admin-toggle-btn" onclick="toggleAdminLogin()">⚙️ 管理者ログイン</button>
+  </div>
 </div>
 
+<!-- 画面右下のフローティング追加ボタン -->
+<button class="floating-add-btn" onclick="scrollToForm()">＋ 追加</button>
+
+<script>
+  // 初期データ（ご提示いただいたデータ）
+  const initialData = [
+    {
+      yearMonth: "2026年 8月",
+      items: [
+        { date: "26.08.23", title: "夏の思い出と最近の近況トーク", url: "https://x.com/tokyofm/status/2091339640762704035?s=46" },
+        { date: "26.08.16", title: "お盆休みの過ごし方とメッセージ", url: "https://x.com/tokyofm/status/2088802925573185931?s=46" },
+        { date: "26.08.09", title: "夏の恒例コーナーと質問回答", url: "https://x.com/tokyofm/status/2086266210598129724?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 7月",
+      items: [
+        { date: "26.07.26", title: "夏フェスや音楽についてのトーク", url: "https://x.com/tokyofm/status/2081192780383346786?s=46" },
+        { date: "26.07.19", title: "リスナーからのリアルな相談にお答え", url: "https://x.com/tokyofm/status/2078656065261211784?s=46" },
+        { date: "26.07.12", title: "最近気になっているモノ・コト", url: "https://x.com/tokyofm/status/2076119350319391166?s=46" },
+        { date: "26.07.05", title: "2026年後半戦の目標と雑談", url: "https://x.com/tokyofm/status/2073582635339665807?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 6月",
+      items: [
+        { date: "26.06.28", title: "\"もしも\"をテーマにトーク！", url: "https://x.com/tokyofm/status/2071045920272081059?s=46" },
+        { date: "26.06.21", title: "境界線について/リスナーからのメッセージ", url: "https://x.com/tokyofm/status/2068509205711999248?s=46" },
+        { date: "26.06.14", title: "不定期コーナー/質問に答えるよ", url: "https://x.com/tokyofm/status/2065972489977737674?s=46" },
+        { date: "26.06.07", title: "質問にたくさん答える回", url: "https://x.com/tokyofm/status/2063435774897660333?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 5月",
+      items: [
+        { date: "26.05.31", title: "仕事悩みから鯉の相談〜自信が無い時に心がける方法", url: "https://x.com/tokyofm/status/2060899059851047030?s=46" },
+        { date: "26.05.24", title: "リフレッシュ方法/誰とでも盛り上がる定番トークネタなど", url: "https://x.com/tokyofm/status/2058362344972108203?s=46" },
+        { date: "26.05.17", title: "緑黄色社会ゲスト回②", url: "https://x.com/tokyofm/status/2055840729344119010?s=46" },
+        { date: "26.05.10", title: "緑黄色社会ゲスト回", url: "https://x.com/tokyofm/status/2053288914891472982?s=46" },
+        { date: "26.05.03", title: "アルバムMOMENTUMの話", url: "https://x.com/tokyofm/status/2050752199785943252?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 4月",
+      items: [
+        { date: "26.04.26", title: "ふまなべ回③", url: "https://x.com/tokyofm/status/2048215484701761921?s=46" },
+        { date: "26.04.19", title: "ふまなべ回②", url: "https://x.com/tokyofm/status/2045678769734902047?s=46" },
+        { date: "26.04.12", title: "ふまなべ回①", url: "https://x.com/tokyofm/status/2043142054503653743?s=46" },
+        { date: "26.04.05", title: "仕事からプライベートまで菊池風磨今年の春は", url: "https://x.com/tokyofm/status/2040605339658117484?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 3月",
+      items: [
+        { date: "26.03.29", title: "思い出の駄菓子・番組1周年振り返り", url: "https://x.com/tokyofm/status/2038068624498241806?s=46" },
+        { date: "26.03.22", title: "人気コーナー回/質問回答", url: "https://x.com/tokyofm/status/2035531909468766460?s=46" },
+        { date: "26.03.15", title: "照れること/大学生時代のトーク", url: "https://x.com/tokyofm/status/2032995194216538621?s=46" },
+        { date: "26.03.08", title: "菊池風磨31歳のトリセツを作るよ", url: "https://x.com/tokyofm/status/2030458479291609233?s=46" },
+        { date: "26.03.01", title: "卒業式の思い出、一人暮らしアドバイス", url: "https://x.com/tokyofm/status/2027921764119163153?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 2月",
+      items: [
+        { date: "26.02.22", title: "ライブ中のステージからの見え方", url: "https://x.com/tokyofm/status/2025385049139581311?s=46" },
+        { date: "26.02.15", title: "ドラマの話/思考整理術", url: "https://x.com/tokyofm/status/2022848334294376497?s=46" },
+        { date: "26.02.08", title: "ソロ写真集/ドームツアーの話", url: "https://x.com/tokyofm/status/2020311619256148070?s=46" },
+        { date: "26.02.01", title: "勝手に菊池研究所/真似したい行動", url: "https://x.com/tokyofm/status/2017774903949464045?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2026年 1月",
+      items: [
+        { date: "26.01.25", title: "日常で直面しがちなピンチの対応策！", url: "https://x.com/tokyofm/status/2015238188827054177?s=46" },
+        { date: "26.01.18", title: "疲れたな〜と感じる瞬間", url: "https://x.com/tokyofm/status/2012701473893736475?s=46" },
+        { date: "26.01.11", title: "受験生へメッセージ", url: "https://x.com/tokyofm/status/2010164758876746000?s=46" },
+        { date: "26.01.04", title: "HANAゲスト回③", url: "https://x.com/tokyofm/status/2007628043754582181?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 12月",
+      items: [
+        { date: "25.12.28", title: "HANAゲスト②", url: "https://x.com/tokyofm/status/2005091328858652930?s=46" },
+        { date: "25.12.21", title: "HANAゲスト回①", url: "https://x.com/tokyofm/status/2002554739498889410?s=46" },
+        { date: "25.12.14", title: "タイプロについて", url: "https://x.com/tokyofm/status/2000017898832634212?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 11月",
+      items: [
+        { date: "25.11.30", title: "お便り回", url: "https://x.com/tokyofm/status/1994944468588663228?s=46" },
+        { date: "25.11.23", title: "渋谷龍太さんゲスト③", url: "https://x.com/tokyofm/status/1992407753424323056?s=46" },
+        { date: "25.11.16", title: "渋谷龍太さんゲスト②", url: "https://x.com/tokyofm/status/1989871038336045186?s=46" },
+        { date: "25.11.09", title: "渋谷龍太さんゲスト①", url: "https://x.com/tokyofm/status/1987334323746242927?s=46" },
+        { date: "25.11.02", title: "最近ハマってる食べ物", url: "https://x.com/tokyofm/status/1984797608309563804?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 10月",
+      items: [
+        { date: "25.10.26", title: "ガチ相談", url: "https://x.com/tokyofm/status/1982260893204574519?s=46" },
+        { date: "25.10.19", title: "平成を振り返る", url: "https://x.com/tokyofm/status/1979724178166006187?s=46" },
+        { date: "25.10.12", title: "timelesz近況・ドラマ裏話", url: "https://x.com/tokyofm/status/1977187463127818514?s=46" },
+        { date: "25.10.05", title: "番組開始半年・10年後の自分", url: "https://x.com/tokyofm/status/1974650747959861408?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 9月",
+      items: [
+        { date: "25.09.28", title: "境界線について", url: "https://x.com/tokyofm/status/1972114033043231061?s=46" },
+        { date: "25.09.21", title: "お守りワード・悩み相談", url: "https://x.com/tokyofm/status/1969577317945991423?s=46" },
+        { date: "25.09.14", title: "サウジアラビア・履歴書", url: "https://x.com/tokyofm/status/1967040603461505487?s=46" },
+        { date: "25.09.07", title: "好きな匂い・夏メッセージ", url: "https://x.com/tokyofm/status/1964503888503197981?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 8月",
+      items: [
+        { date: "25.08.31", title: "勝手に菊池研究所", url: "https://x.com/tokyofm/status/1961967173364244547?s=46" },
+        { date: "25.08.24", title: "timelesz・写真集トーク", url: "https://x.com/tokyofm/status/1959430458477092868?s=46" },
+        { date: "25.08.17", title: "ハマりもの・日用品のこだわり", url: "https://x.com/tokyofm/status/1956893743241412644?s=46" },
+        { date: "25.08.10", title: "お盆・学生時代の夏休み", url: "https://x.com/tokyofm/status/1954357028190667205?s=46" },
+        { date: "25.08.03", title: "夏の過ごし方・ルーティン", url: "https://x.com/tokyofm/status/1951820312812962249?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 7月",
+      items: [
+        { date: "25.07.27", title: "新コーナー開始", url: "https://x.com/tokyofm/status/1949283598068339006?s=46" },
+        { date: "25.07.20", title: "海の日・バスケキャスター", url: "https://x.com/tokyofm/status/1946746882753188009?s=46" },
+        { date: "25.07.13", title: "検索履歴・見られたくないもの", url: "https://x.com/tokyofm/status/1944210167672782984?s=46" },
+        { date: "25.07.06", title: "整理整頓術トーク", url: "https://x.com/tokyofm/status/1941673452756488646?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 6月",
+      items: [
+        { date: "25.06.29", title: "夏トーク・ゆるゆる雑談", url: "https://x.com/tokyofm/status/1939136738116681801?s=46" },
+        { date: "25.06.22", title: "「照れる」・リリー・フランキー", url: "https://x.com/tokyofm/status/1936600022445183136?s=46" },
+        { date: "25.06.15", title: "洗濯・片付けトーク", url: "https://x.com/tokyofm/status/1934063307519881255?s=46" },
+        { date: "25.06.08", title: "FAMオンエア", url: "https://x.com/tokyofm/status/1931526592595108345?s=46" },
+        { date: "25.06.01", title: "焦ったシチュエーション", url: "https://x.com/tokyofm/status/1928989877380542783?s=46" }
+      ]
+    },
+    {
+      yearMonth: "2025年 5月",
+      items: [
+        { date: "25.05.25", title: "ゲスト回iriさん後編", url: "https://x.com/tokyofm/status/1926453162552012945?s=46" },
+        { date: "25.05.18", title: "ゲスト回iriさん前編", url: "https://x.com/tokyofm/status/1923916447128092862?s=46" },
+        { date: "25.05.11", title: "母の日・プライベート話", url: "https://x.com/tokyofm/status/1921395044231020871?s=46" },
+        { date: "25.05.04", title: "真相をお話します・仕事裏話", url: "https://x.com/tokyofm/status/1918843017668018252?s=465" }
+      ]
+    },
+    {
+      yearMonth: "2025年 4月",
+      items: [
+        { date: "25.04.27", title: "真相をお話します・質問回答", url: "https://x.com/tokyofm/status/1916336637933441420?s=46" },
+        { date: "25.04.13", title: "新メンバー5人出演回", url: "https://x.com/tokyofm/status/1911245454559367358?s=46" },
+        { date: "25.04.06", title: "番組開始", url: "https://x.com/tokyofm/status/1908725815355072556?s=46" }
+      ]
+    }
+  ];
+
+  let radioData = [];
+  const saved = localStorage.getItem("fuma_radio_data");
+  if (saved) {
+    try { radioData = JSON.parse(saved); } catch (e) { radioData = initialData; }
+  } else {
+    radioData = initialData;
+    saveToStorage();
+  }
+
+  let isAdminLoggedIn = sessionStorage.getItem("fuma_admin_logged_in") === "true";
+
+  function saveToStorage() {
+    localStorage.setItem("fuma_radio_data", JSON.stringify(radioData));
+  }
+
+  function applyAdminUI() {
+    const body = document.getElementById("body-root");
+    const btn = document.getElementById("admin-toggle-btn");
+    const form = document.getElementById("admin-form");
+
+    if (isAdminLoggedIn) {
+      body.classList.add("admin-mode");
+      btn.textContent = "⚙️ 管理者ログアウト";
+      btn.classList.add("logged-in");
+    } else {
+      body.classList.remove("admin-mode");
+      btn.textContent = "⚙️ 管理者ログイン";
+      btn.classList.remove("logged-in");
+      form.classList.remove("show");
+    }
+    renderList();
+  }
+
+  function toggleAdminLogin() {
+    if (!isAdminLoggedIn) {
+      const pwd = prompt("管理者パスワードを入力してください：");
+      if (pwd === "fuma123") { // パスワードは必要に応じて変更してください
+        isAdminLoggedIn = true;
+        sessionStorage.setItem("fuma_admin_logged_in", "true");
+        alert("管理者としてログインしました！");
+      } else if (pwd !== null) {
+        alert("パスワードが違います");
+        return;
+      }
+    } else {
+      if (confirm("ログアウトしますか？")) {
+        isAdminLoggedIn = false;
+        sessionStorage.removeItem("fuma_admin_logged_in");
+        alert("ログアウトしました");
+      }
+    }
+    applyAdminUI();
+  }
+
+  function scrollToForm() {
+    const form = document.getElementById("admin-form");
+    form.classList.add("show");
+    form.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function addNewItem() {
+    const dateInput = document.getElementById("input-date").value.trim();
+    const titleInput = document.getElementById("input-title").value.trim();
+    const urlInput = document.getElementById("input-url").value.trim();
+
+    if (!dateInput || !titleInput || !urlInput) {
+      alert("すべての項目を入力してください！");
+      return;
+    }
+
+    // 日付から年月を自動判定 (例: "26.08.23" または "2026.08.23" から年月を作る)
+    let yearPart = "2026";
+    let monthPart = "1";
+    
+    if (dateInput.startsWith("25.")) {
+      yearPart = "2025";
+      monthPart = parseInt(dateInput.substring(3, 5), 10);
+    } else if (dateInput.startsWith("26.")) {
+      yearPart = "2026";
+      monthPart = parseInt(dateInput.substring(3, 5), 10);
+    } else if (dateInput.length >= 4) {
+      // 2026.08 などに対応
+      const parts = dateInput.split(/[\.\-\/]/);
+      if (parts.length >= 2) {
+        yearPart = parts[0].length === 2 ? "20" + parts[0] : parts[0];
+        monthPart = parseInt(parts[1], 10);
+      }
+    }
+
+    const targetYearMonth = `${yearPart}年 ${monthPart}月`;
+
+    // 該当する年月のグループを探す、なければ新しく作る
+    let group = radioData.find(g => g.yearMonth === targetYearMonth);
+    if (!group) {
+      group = { yearMonth: targetYearMonth, items: [] };
+      radioData.unshift(group); // リストの先頭に追加
+    }
+
+    group.items.unshift({ date: dateInput, title: titleInput, url: urlInput });
+
+    saveToStorage();
+    renderList();
+
+    // フォームをクリアして閉じる
+    document.getElementById("input-date").value = "";
+    document.getElementById("input-title").value = "";
+    document.getElementById("input-url").value = "";
+    document.getElementById("admin-form").classList.remove("show");
+    alert("新しい放送回を追加しました！");
+  }
+
+  function deleteItem(ymIndex, itemIndex) {
+    if (!isAdminLoggedIn) return;
+    if (confirm("この項目を削除しますか？")) {
+      radioData[ymIndex].items.splice(itemIndex, 1);
+      //もしグループのitemsが空になったらグループ自体を削除
+      if (radioData[ymIndex].items.length === 0) {
+        radioData.splice(ymIndex, 1);
+      }
+      saveToStorage();
+      renderList();
+    }
+  }
+
+  function renderList() {
+    const container = document.getElementById("radio-list-container");
+    container.innerHTML = "";
+
+    radioData.forEach((group, ymIndex) => {
+      const details = document.createElement("details");
+      // 一番最初の月（最新）は最初から開いておくなどの演出も可能ですが、お好みで open 属性をつけられます
+      if (ymIndex === 0) details.setAttribute("open", "true");
+
+      const summary = document.createElement("summary");
+      summary.textContent = group.yearMonth;
+      details.appendChild(summary);
+
+      group.items.forEach((item, itemIndex) => {
+        const cardItem = document.createElement("div");
+        cardItem.className = "card-item";
+        cardItem.innerHTML = `
+          <a href="${item.url}" target="_blank" class="info">
+            <span class="date">${item.date}</span>
+            <span class="title">${item.title}</span>
+          </a>
+          <a href="${item.url}" target="_blank" class="x-btn">𝕏</a>
+          <button class="admin-delete-btn" onclick="deleteItem(${ymIndex}, ${itemIndex})" title="削除">×</button>
+        `;
+        details.appendChild(cardItem);
+      });
+
+      container.appendChild(details);
+    });
+  }
+
+  // 初期描画
+  applyAdminUI();
+</script>
+
+</body>
+</html>
