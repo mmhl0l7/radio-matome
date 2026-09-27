@@ -246,6 +246,25 @@
     .admin-panel h3 { color: var(--text-main); margin-top: 0; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;}
     .logout-text-btn { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
     
+    /* 管理者専用のアクセス数表示ボックス */
+    .admin-stats-box {
+      background: var(--bg-color);
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border-color);
+    }
+    .admin-stats-box span.count-num {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--accent-pill);
+    }
+
     .form-row { margin-bottom: 12px; }
     .form-row input, .form-row select {
       width: 100%;
@@ -298,18 +317,16 @@
 
 <div class="radio-container">
   
-  <!-- 上部ナビゲーションエリア（画像のデザインを再現） -->
+  <!-- 上部ナビゲーションエリア -->
   <div class="top-nav-bar">
     <h1 class="main-title" id="secret-title">Radio log.</h1>
     <div class="header-actions">
-      <!-- 上部ミニアイコンタブ群 -->
       <div class="icon-navs">
         <button class="icon-tab active" title="ホーム">🏠</button>
         <button class="icon-tab" title="ノート">📖</button>
         <button class="icon-tab" title="カレンダー">📅</button>
         <button class="icon-tab" title="タイマー">⏱️</button>
       </div>
-      <!-- くるくる回る更新ボタン -->
       <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()" title="更新">🔄</button>
     </div>
   </div>
@@ -322,12 +339,22 @@
     <button class="tab-btn" onclick="switchMainTab('shino', this)">…＆シノ！from timelesz</button>
   </div>
 
-  <!-- 管理者用：新規追加パネル -->
+  <!-- 管理者用パネル（一般ユーザーには隠されます） -->
   <div class="admin-panel">
     <h3>
-      <span>＋ 新しい回を追加</span>
+      <span>管理人メニュー</span>
       <span class="logout-text-btn" onclick="logoutAdmin()">ログアウト</span>
     </h3>
+
+    <!-- 管理者だけが見られるアクセス数（累計の開き回数） -->
+    <div class="admin-stats-box">
+      <span>📊 このページの総アクセス（閲覧）回数</span>
+      <span class="count-num" id="visit-count-display">0回</span>
+    </div>
+
+    <hr style="border: none; border-top: 1px solid var(--border-color); margin: 15px 0;">
+
+    <h3 style="font-size: 1rem; margin-bottom: 12px;">＋ 新しい回を追加</h3>
     <div class="form-row">
       <select id="add-target">
         <option value="fuma">菊池風磨 hoursz</option>
@@ -358,6 +385,10 @@
 </div>
 
 <script>
+  // 簡易アクセス解析：誰かがこのページを開くたびにカウントアップ（ブラウザの仕組み上、完全な「別の人」の人数特定は難しいですが、何回開かれたかの目安になります）
+  let totalVisits = parseInt(localStorage.getItem("oshi_radio_visits_v4") || "0") + 1;
+  localStorage.setItem("oshi_radio_visits_v4", totalVisits);
+
   // ホーム画面から起動した際、古いキャッシュを回避して強制自動リフレッシュさせる仕組み
   (function() {
     if (window.navigator.standalone) {
@@ -369,7 +400,6 @@
     }
   })();
 
-  // 菊池風磨 hoursz の2025年4月からの全データ
   const defaultData = {
     fuma: {
       "2026年 8月": [
@@ -526,17 +556,17 @@
     const body = document.getElementById("body-root");
     if (isAdmin) {
       body.classList.add("admin-mode");
+      // 管理者パネル内のアクセス数表示を更新
+      document.getElementById("visit-count-display").textContent = totalVisits + "回";
     } else {
       body.classList.remove("admin-mode");
     }
     renderAll();
   }
 
-  // くるくる回る更新ボタンのアクション
   function triggerRefresh() {
     const btn = document.getElementById("refresh-btn");
     btn.classList.add("rotating");
-    
     setTimeout(() => {
       window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
     }, 500);
