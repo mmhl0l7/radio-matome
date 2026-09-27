@@ -3,52 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📻 推しラジオまとめポータル</title>
+  <title>Study. / Radio Log</title>
   <style>
+    :root {
+      --bg-color: #faf4f5;
+      --card-bg: #ffffff;
+      --text-main: #2d2327;
+      --text-muted: #8c7b80;
+      --accent-dark: #3a2e33;
+      --accent-pink: #f5e6eb;
+      --border-color: #f0e1e6;
+    }
+
     body { 
-      background-color: #f3e5f5; 
-      font-family: sans-serif; 
+      background-color: var(--bg-color); 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      color: var(--text-main);
       margin: 0; 
       padding: 30px; 
       padding-bottom: 120px;
     }
-    .radio-container { max-width: 750px; margin: 0 auto; }
+    .radio-container { max-width: 650px; margin: 0 auto; }
     
     /* ヘッダータイトル */
+    .header-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
     h1.main-title { 
-      color: #7b1fa2; 
-      text-align: center; 
-      margin-bottom: 25px; 
-      font-size: 3.0rem; 
-      word-break: break-all; 
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      color: var(--text-main); 
+      margin: 0; 
+      font-size: 2.5rem; 
+      letter-spacing: -0.5px;
+    }
+    .profile-pill {
+      background: var(--accent-pink);
+      color: var(--accent-dark);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
     }
 
-    /* タブ切り替えボタンエリア */
+    /* タブ切り替えボタンエリア（ピル型） */
     .nav-tabs {
       display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 35px;
-      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+      overflow-x: auto;
+      padding-bottom: 5px;
     }
 
     .tab-btn {
-      background: #e1bee7;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #4a148c;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
     }
 
     .tab-btn.active {
-      background: #7b1fa2;
+      background: var(--accent-dark);
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+      border-color: var(--accent-dark);
+      box-shadow: 0 4px 10px rgba(58, 46, 51, 0.2);
     }
 
     /* セクション切り替え */
@@ -61,85 +90,102 @@
 
     /* カード全体の余白と枠 */
     details { 
-      background: white; 
-      border-radius: 35px; 
-      padding: 35px 45px; 
-      margin-bottom: 35px; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+      background: var(--card-bg); 
+      border-radius: 24px; 
+      padding: 25px 30px; 
+      margin-bottom: 25px; 
+      box-shadow: 0 4px 15px rgba(58, 46, 51, 0.03); 
+      border: 1px solid var(--border-color);
     }
     
     /* 年月表示 */
     summary { 
-      font-weight: bold; 
-      color: #7b1fa2; 
-      padding: 20px 10px; 
+      font-weight: 600; 
+      color: var(--accent-dark); 
+      padding: 5px 10px; 
       cursor: pointer; 
       outline: none; 
       list-style: none; 
-      font-size: 2.5rem; 
+      font-size: 1.3rem; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    summary::after { content: ' ▼'; float: right; font-size: 2.0rem; color: #ba68c8; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '▾'; font-size: 1.2rem; color: var(--text-muted); }
     
-    /* 項目間の余白（シンプルに日付とボタンのみ配置） */
+    /* 項目間のレイアウト（日付とXボタンのみ） */
     .card-item { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
-      padding: 25px 0; 
-      border-top: 2px solid #f3e5f5; 
+      padding: 18px 10px; 
+      border-top: 1px solid var(--border-color); 
+      margin-top: 15px;
     }
     
-    /* 日付サイズ */
-    .date { font-size: 2.0rem; color: #7b1fa2; font-weight: bold; }
+    /* 日付表示 */
+    .date { 
+      font-size: 1.1rem; 
+      color: var(--text-main); 
+      font-weight: 600; 
+      background: var(--bg-color);
+      padding: 6px 14px;
+      border-radius: 12px;
+    }
     
-    /* ボタンサイズ */
+    /* Xボタン（丸型ダークブラウン） */
     .x-btn { 
-      background-color: #ba68c8; 
+      background-color: var(--accent-dark); 
       color: white; 
       text-decoration: none; 
-      width: 70px; 
-      height: 70px; 
+      width: 42px; 
+      height: 42px; 
       border-radius: 50%; 
       display: flex; 
       justify-content: center; 
       align-items: center; 
-      font-size: 1.8rem; 
+      font-size: 1.1rem; 
+      font-weight: bold;
       flex-shrink: 0; 
-      transition: background 0.2s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: opacity 0.2s;
+      box-shadow: 0 2px 6px rgba(58, 46, 51, 0.2);
     }
-    .x-btn:hover { background-color: #ab47bc; }
+    .x-btn:hover { opacity: 0.8; }
 
     /* 追加・管理エリアのスタイル */
     .admin-panel {
-      background: #ffffff;
-      border-radius: 30px;
-      padding: 30px;
-      margin-bottom: 35px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(58, 46, 51, 0.05);
+      border: 1px solid var(--border-color);
       display: none;
     }
     .admin-mode .admin-panel { display: block; }
 
-    .admin-panel h3 { color: #7b1fa2; margin-top: 0; font-size: 1.8rem; }
-    .form-row { margin-bottom: 15px; }
+    .admin-panel h3 { color: var(--accent-dark); margin-top: 0; font-size: 1.2rem; }
+    .form-row { margin-bottom: 12px; }
     .form-row input, .form-row select {
       width: 100%;
-      padding: 15px;
-      border: 2px solid #e1bee7;
-      border-radius: 15px;
-      font-size: 1.1rem;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-color);
+      border-radius: 14px;
+      font-size: 0.95rem;
       box-sizing: border-box;
       outline: none;
+      color: var(--text-main);
     }
     .submit-btn {
-      background: #7b1fa2;
+      background: var(--accent-dark);
       color: white;
       border: none;
       width: 100%;
-      padding: 16px;
-      border-radius: 15px;
-      font-size: 1.2rem;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
     }
@@ -147,29 +193,33 @@
     /* フッター管理者ログインボタン */
     .footer-admin {
       text-align: center;
-      margin-top: 50px;
+      margin-top: 40px;
     }
     .admin-toggle-btn {
-      background: none;
-      border: 2px solid #ba68c8;
-      color: #7b1fa2;
-      padding: 12px 28px;
-      border-radius: 30px;
-      font-size: 1.1rem;
+      background: transparent;
+      border: 1px solid var(--text-muted);
+      color: var(--text-muted);
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 0.9rem;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 500;
       transition: all 0.2s;
     }
     .admin-toggle-btn.logged-in {
-      background: #7b1fa2;
+      background: var(--accent-dark);
       color: white;
+      border-color: var(--accent-dark);
     }
   </style>
 </head>
 <body id="body-root">
 
 <div class="radio-container">
-  <h1 class="main-title">📻 推しラジオまとめポータル</h1>
+  <div class="header-area">
+    <h1 class="main-title">Radio log.</h1>
+    <div class="profile-pill">✨ PORTAL</div>
+  </div>
 
   <!-- タブ切り替えボタン -->
   <div class="nav-tabs">
@@ -178,9 +228,9 @@
     <button class="tab-btn" onclick="switchTab('shino', this)">💙 しの</button>
   </div>
 
-  <!-- 管理者用：新規追加パネル (タイトル入力欄を除外してシンプルに) -->
+  <!-- 管理者用：新規追加パネル -->
   <div class="admin-panel">
-    <h3>＋ 新しいラジオ回を追加</h3>
+    <h3>＋ 新しい回を追加</h3>
     <div class="form-row">
       <select id="add-target">
         <option value="fuma">菊池風磨</option>
@@ -202,8 +252,6 @@
 
   <!-- ================= 1. 菊池風磨セクション ================= -->
   <div id="section-fuma" class="radio-section active-section">
-    <h2 style="color: #7b1fa2; font-size: 2.2rem; text-align: center; margin-bottom: 30px;">菊池風磨 hoursz 📸まとめ</h2>
-    
     <!-- 2026年 8月 -->
     <details open><summary>2026年 8月</summary>
       <div class="card-item"><span class="date">26.08.23</span><a href="https://x.com/tokyofm/status/2091339640762704035?s=46" target="_blank" class="x-btn">𝕏</a></div>
@@ -345,7 +393,6 @@
 
   <!-- ================= 2. 勝利 / 原セクション ================= -->
   <div id="section-shori" class="radio-section">
-    <h2 style="color: #7b1fa2; font-size: 2.2rem; text-align: center; margin-bottom: 30px;">勝利 / 原のラジオまとめ</h2>
     <details open><summary>2026年 8月</summary>
       <div class="card-item"><span class="date">26.08.20</span><a href="https://x.com/" target="_blank" class="x-btn">𝕏</a></div>
     </details>
@@ -353,7 +400,6 @@
 
   <!-- ================= 3. しのセクション ================= -->
   <div id="section-shino" class="radio-section">
-    <h2 style="color: #7b1fa2; font-size: 2.2rem; text-align: center; margin-bottom: 30px;">しののラジオまとめ</h2>
     <details open><summary>2026年 8月</summary>
       <div class="card-item"><span class="date">26.08.18</span><a href="https://x.com/" target="_blank" class="x-btn">𝕏</a></div>
     </details>
@@ -438,8 +484,7 @@
       targetDetails = document.createElement("details");
       targetDetails.open = true;
       targetDetails.innerHTML = `<summary>${ym}</summary>`;
-      const h2 = section.querySelector("h2");
-      h2.after(targetDetails);
+      section.prepend(targetDetails);
     }
 
     const newItem = document.createElement("div");
