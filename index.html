@@ -3,319 +3,430 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📻 推しラジオ管理ダッシュボード</title>
+  <title>📻 推しラジオまとめポータル</title>
   <style>
-    :root {
-      --bg-color: #f7f3f5;
-      --card-bg: #ffffff;
-      --primary: #6d4c41; /* 上品なブラウン/モーヴ系 */
-      --primary-light: #d7ccc8;
-      --accent: #bcaaa4;
-      --text-main: #3e2723;
-      --text-sub: #8d6e63;
-      --border-radius: 20px;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      padding: 30px;
+    body { 
+      background-color: #f3e5f5; 
+      font-family: sans-serif; 
+      margin: 0; 
+      padding: 30px; 
       padding-bottom: 120px;
-      color: var(--text-main);
+    }
+    .radio-container { max-width: 750px; margin: 0 auto; }
+    
+    /* ヘッダータイトル */
+    h1.main-title { 
+      color: #7b1fa2; 
+      text-align: center; 
+      margin-bottom: 25px; 
+      font-size: 3.0rem; 
+      word-break: break-all; 
     }
 
-    .container {
-      max-width: 750px;
-      margin: 0 auto;
-    }
-
-    /* ヘッダー */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-
-    .app-title {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.02em;
-      margin: 0;
-    }
-
-    .app-subtitle {
-      font-size: 0.95rem;
-      color: var(--text-sub);
-      margin-top: 5px;
-    }
-
-    /* 上部タブ切り替え (画像のようなピル型ナビ) */
+    /* タブ切り替えボタンエリア */
     .nav-tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 25px;
-      overflow-x: auto;
-      padding-bottom: 5px;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 35px;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
-      background: #eef2f5;
+      background: #e1bee7;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 30px;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-sub);
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #4a148c;
       cursor: pointer;
-      white-space: nowrap;
       transition: all 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     .tab-btn.active {
-      background: #3e2723;
+      background: #7b1fa2;
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(62, 39, 35, 0.2);
+      box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
     }
 
-    /* 新規追加エリア (管理モード時のみ表示) */
-    .add-card {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 25px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-      border: 1px solid rgba(0,0,0,0.04);
+    /* セクション切り替え */
+    .radio-section {
       display: none;
     }
-    .admin-mode .add-card { display: block; }
-
-    .add-card h3 {
-      font-size: 1.2rem;
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: var(--text-main);
+    .radio-section.active-section {
+      display: block;
     }
 
-    .form-row {
-      margin-bottom: 15px;
+    /* カード全体の余白と枠 */
+    details { 
+      background: white; 
+      border-radius: 35px; 
+      padding: 35px 45px; 
+      margin-bottom: 35px; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
     }
-
-    .form-row input, .form-row select, .form-row textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #e0e0e0;
-      border-radius: 12px;
-      font-size: 1rem;
-      box-sizing: border-box;
-      outline: none;
-      background: #fafafa;
-      transition: border 0.2s;
+    
+    /* 年月表示 */
+    summary { 
+      font-weight: bold; 
+      color: #7b1fa2; 
+      padding: 20px 10px; 
+      cursor: pointer; 
+      outline: none; 
+      list-style: none; 
+      font-size: 2.5rem; 
     }
-
-    .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
-      border-color: var(--text-main);
-      background: #fff;
+    summary::after { content: ' ▼'; float: right; font-size: 2.0rem; color: #ba68c8; }
+    
+    /* 項目間の余白 */
+    .card-item { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 40px 0; 
+      border-top: 2px solid #f3e5f5; 
     }
-
-    .submit-btn {
-      background: var(--text-main);
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .submit-btn:hover { opacity: 0.9; }
-
-    /* リスト項目カード (画像のデザインを踏襲) */
-    .radio-card {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 20px 24px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: transform 0.15s;
-      border: 1px solid rgba(0,0,0,0.02);
-    }
-
-    .radio-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .radio-info {
-      flex: 1;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .meta-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    /* ラジオ番組タグ */
-    .badge-shori { background: #ffebee; color: #c62828; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-    .badge-fuma { background: #f3e5f5; color: #7b1fa2; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-    .badge-shino { background: #e3f2fd; color: #1565c0; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-
-    .card-date {
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      font-weight: 600;
-    }
-
-    .card-title {
-      font-size: 1.15rem;
-      color: var(--text-main);
-      font-weight: 500;
-      line-height: 1.4;
-    }
-
-    /* アクションボタン (Xリンク & 削除) */
-    .card-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-left: 15px;
-    }
-
-    .x-link-btn {
-      background: #f0f0f0;
-      color: #333;
-      text-decoration: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1rem;
+    
+    .info { display: flex; flex-direction: column; flex: 1; text-decoration: none; }
+    
+    /* 日付・タイトルサイズ */
+    .date { font-size: 1.8rem; color: #9c27b0; font-weight: bold; }
+    .title { font-size: 2.2rem; color: #333; margin-top: 15px; line-height: 1.5; }
+    
+    /* ボタンサイズ */
+    .x-btn { 
+      background-color: #ba68c8; 
+      color: white; 
+      text-decoration: none; 
+      width: 80px; 
+      height: 80px; 
+      border-radius: 50%; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      font-size: 2.0rem; 
+      margin-left: 30px; 
+      flex-shrink: 0; 
       transition: background 0.2s;
     }
-    .x-link-btn:hover { background: #e0e0e0; }
+    .x-btn:hover { background-color: #ab47bc; }
 
-    .delete-btn {
+    /* 追加・管理エリアのスタイル */
+    .admin-panel {
+      background: #ffffff;
+      border-radius: 30px;
+      padding: 30px;
+      margin-bottom: 35px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
       display: none;
-      background: none;
-      border: none;
-      color: #e57373;
-      font-size: 1.3rem;
-      cursor: pointer;
-      padding: 5px;
     }
-    .admin-mode .delete-btn { display: block; }
+    .admin-mode .admin-panel { display: block; }
 
-    /* 管理者フッター */
+    .admin-panel h3 { color: #7b1fa2; margin-top: 0; font-size: 1.8rem; }
+    .form-row { margin-bottom: 15px; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e1bee7;
+      border-radius: 15px;
+      font-size: 1.1rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .submit-btn {
+      background: #7b1fa2;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 16px;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* フッター管理者ログインボタン */
     .footer-admin {
       text-align: center;
-      margin-top: 40px;
+      margin-top: 50px;
     }
-
     .admin-toggle-btn {
       background: none;
-      border: 1px solid #d7ccc8;
-      color: var(--text-sub);
-      padding: 10px 24px;
-      border-radius: 20px;
-      font-size: 0.9rem;
+      border: 2px solid #ba68c8;
+      color: #7b1fa2;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1.1rem;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: bold;
+      transition: all 0.2s;
     }
     .admin-toggle-btn.logged-in {
-      background: var(--text-main);
+      background: #7b1fa2;
       color: white;
-      border-color: var(--text-main);
     }
+
+    .delete-btn {
+      background: #ff8a80;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-left: 10px;
+      display: none;
+    }
+    .admin-mode .delete-btn { display: inline-block; }
   </style>
 </head>
 <body id="body-root">
 
-<div class="container">
-  <!-- ヘッダー -->
-  <div class="header">
-    <div>
-      <h1 class="app-title">Radio log.</h1>
-      <div class="app-subtitle">推しラジオのアーカイブ管理表</div>
-    </div>
-  </div>
+<div class="radio-container">
+  <h1 class="main-title">📻 推しラジオまとめポータル</h1>
 
   <!-- タブ切り替えボタン -->
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('ALL', this)">ALL すべて</button>
-    <button class="tab-btn" onclick="switchTab('FUMA', this)">💜 菊池風磨</button>
-    <button class="tab-btn" onclick="switchTab('SHORI', this)">❤️ 勝利 / 原</button>
-    <button class="tab-btn" onclick="switchTab('SHINO', this)">💙 しの</button>
+    <button class="tab-btn active" onclick="switchTab('fuma', this)">💜 菊池風磨</button>
+    <button class="tab-btn" onclick="switchTab('shori', this)">❤️ 勝利 / 原</button>
+    <button class="tab-btn" onclick="switchTab('shino', this)">💙 しの</button>
   </div>
 
-  <!-- 新規追加フォーム（管理者モードでのみ表示） -->
-  <div class="add-card">
-    <h3>＋ 新しい放送回を追加</h3>
+  <!-- 管理者用：新規追加パネル -->
+  <div class="admin-panel">
+    <h3>＋ 新しいラジオ回を追加</h3>
     <div class="form-row">
-      <select id="input-category">
-        <option value="FUMA">菊池風磨</option>
-        <option value="SHORI">勝利 / 原</option>
-        <option value="SHINO">しの</option>
+      <select id="add-target">
+        <option value="fuma">菊池風磨</option>
+        <option value="shori">勝利 / 原</option>
+        <option value="shino">しの</option>
       </select>
     </div>
     <div class="form-row">
-      <input type="text" id="input-date" placeholder="日付 (例: 26.08.30)">
+      <input type="text" id="add-yearmonth" placeholder="表示する年月 (例: 2026年 9月)">
     </div>
     <div class="form-row">
-      <textarea id="input-title" rows="2" placeholder="タイトル・内容を入力"></textarea>
+      <input type="text" id="add-date" placeholder="日付 (例: 26.09.06)">
     </div>
     <div class="form-row">
-      <input type="text" id="input-url" placeholder="X (Twitter) のリンクURL">
+      <textarea id="add-title" rows="2" placeholder="タイトル"></textarea>
     </div>
-    <button class="submit-btn" onclick="addNewRadioItem()">タスクを追加する</button>
+    <div class="form-row">
+      <input type="text" id="add-url" placeholder="X (Twitter) のURL">
+    </div>
+    <button class="submit-btn" onclick="addNewRadio()">追加を保存する</button>
   </div>
 
-  <!-- リスト表示エリア -->
-  <div id="radio-list"></div>
+  <!-- ================= 1. 菊池風磨セクション ================= -->
+  <div id="section-fuma" class="radio-section active-section">
+    <h2 style="color: #7b1fa2; font-size: 2.2rem; text-align: center; margin-bottom: 30px;">菊池風磨 hoursz 📸まとめ</h2>
+    
+    <!-- 2026年 8月 -->
+    <details open><summary>2026年 8月</summary>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2091339640762704035?s=46" target="_blank" class="info">
+          <span class="date">26.08.23</span><span class="title">夏の思い出と最近の近況トーク</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2091339640762704035?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2088802925573185931?s=46" target="_blank" class="info">
+          <span class="date">26.08.16</span><span class="title">お盆休みの過ごし方とメッセージ</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2088802925573185931?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2086266210598129724?s=46" target="_blank" class="info">
+          <span class="date">26.08.09</span><span class="title">夏の恒例コーナーと質問回答</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2086266210598129724?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+    </details>
 
-  <!-- 管理者ログイン切り替え -->
+    <!-- 2026年 7月 -->
+    <details><summary>2026年 7月</summary>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2081192780383346786?s=46" target="_blank" class="info">
+          <span class="date">26.07.26</span><span class="title">夏フェスや音楽についてのトーク</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2081192780383346786?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2078656065261211784?s=46" target="_blank" class="info">
+          <span class="date">26.07.19</span><span class="title">リスナーからのリアルな相談にお答え</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2078656065261211784?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2076119350319391166?s=46" target="_blank" class="info">
+          <span class="date">26.07.12</span><span class="title">最近気になっているモノ・コト</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2076119350319391166?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+      <div class="card-item">
+        <a href="https://x.com/tokyofm/status/2073582635339665807?s=46" target="_blank" class="info">
+          <span class="date">26.07.05</span><span class="title">2026年後半戦の目標と雑談</span>
+        </a>
+        <a href="https://x.com/tokyofm/status/2073582635339665807?s=46" target="_blank" class="x-btn">𝕏</a>
+      </div>
+    </details>
+
+    <!-- 2026年 6月 -->
+    <details><summary>2026年 6月</summary>
+      <div class="card-item"><div class="info"><span class="date">26.06.28</span><span class="title">"もしも"をテーマにトーク！</span></div><a href="https://x.com/tokyofm/status/2071045920272081059?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.06.21</span><span class="title">境界線について/リスナーからのメッセージ</span></div><a href="https://x.com/tokyofm/status/2068509205711999248?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.06.14</span><span class="title">不定期コーナー/質問に答えるよ</span></div><a href="https://x.com/tokyofm/status/2065972489977737674?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.06.07</span><span class="title">質問にたくさん答える回</span></div><a href="https://x.com/tokyofm/status/2063435774897660333?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2026年 5月 -->
+    <details><summary>2026年 5月</summary>
+      <div class="card-item"><div class="info"><span class="date">26.05.31</span><span class="title">仕事悩みから鯉の相談〜自信が無い時に心がける方法</span></div><a href="https://x.com/tokyofm/status/2060899059851047030?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.05.24</span><span class="title">リフレッシュ方法/誰とでも盛り上がる定番トークネタなど</span></div><a href="https://x.com/tokyofm/status/2058362344972108203?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.05.17</span><span class="title">緑黄色社会ゲスト回②</span></div><a href="https://x.com/tokyofm/status/2055840729344119010?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.05.10</span><span class="title">緑黄色社会ゲスト回</span></div><a href="https://x.com/tokyofm/status/2053288914891472982?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.05.03</span><span class="title">アルバムMOMENTUMの話</span></div><a href="https://x.com/tokyofm/status/2050752199785943252?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2026年 4月 -->
+    <details><summary>2026年 4月</summary>
+      <div class="card-item"><div class="info"><span class="date">26.04.26</span><span class="title">ふまなべ回③</span></div><a href="https://x.com/tokyofm/status/2048215484701761921?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.04.19</span><span class="title">ふまなべ回②</span></div><a href="https://x.com/tokyofm/status/2045678769734902047?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.04.12</span><span class="title">ふまなべ回①</span></div><a href="https://x.com/tokyofm/status/2043142054503653743?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.04.05</span><span class="title">仕事からプライベートまで菊池風磨今年の春は</span></div><a href="https://x.com/tokyofm/status/2040605339658117484?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2026年 3月 -->
+    <details><summary>2026年 3月</summary>
+      <div class="card-item"><div class="info"><span class="date">26.03.29</span><span class="title">思い出の駄菓子・番組1周年振り返り</span></div><a href="https://x.com/tokyofm/status/2038068624498241806?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.03.22</span><span class="title">人気コーナー回/質問回答</span></div><a href="https://x.com/tokyofm/status/2035531909468766460?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.03.15</span><span class="title">照れること/大学生時代のトーク</span></div><a href="https://x.com/tokyofm/status/2032995194216538621?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.03.08</span><span class="title">菊池風磨31歳のトリセツを作るよ</span></div><a href="https://x.com/tokyofm/status/2030458479291609233?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.03.01</span><span class="title">卒業式の思い出、一人暮らしアドバイス</span></div><a href="https://x.com/tokyofm/status/2027921764119163153?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2026年 2月 -->
+    <details><summary>2026年 2月</summary>
+      <div class="card-item"><div class="info"><span class="date">26.02.22</span><span class="title">ライブ中のステージからの見え方</span></div><a href="https://x.com/tokyofm/status/2025385049139581311?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.02.15</span><span class="title">ドラマの話/思考整理術</span></div><a href="https://x.com/tokyofm/status/2022848334294376497?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.02.08</span><span class="title">ソロ写真集/ドームツアーの話</span></div><a href="https://x.com/tokyofm/status/2020311619256148070?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.02.01</span><span class="title">勝手に菊池研究所/真似したい行動</span></div><a href="https://x.com/tokyofm/status/2017774903949464045?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2026年 1月 -->
+    <details><summary>2026年 1月</summary>
+      <div class="card-item"><div class="info"><span class="date">26.01.25</span><span class="title">日常で直面しがちなピンチの対応策！</span></div><a href="https://x.com/tokyofm/status/2015238188827054177?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.01.18</span><span class="title">疲れたな〜と感じる瞬間</span></div><a href="https://x.com/tokyofm/status/2012701473893736475?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.01.11</span><span class="title">受験生へメッセージ</span></div><a href="https://x.com/tokyofm/status/2010164758876746000?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">26.01.04</span><span class="title">HANAゲスト回③</span></div><a href="https://x.com/tokyofm/status/2007628043754582181?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 12月 -->
+    <details><summary>2025年 12月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.12.28</span><span class="title">HANAゲスト②</span></div><a href="https://x.com/tokyofm/status/2005091328858652930?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.12.21</span><span class="title">HANAゲスト回①</span></div><a href="https://x.com/tokyofm/status/2002554739498889410?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.12.14</span><span class="title">タイプロについて</span></div><a href="https://x.com/tokyofm/status/2000017898832634212?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 11月 -->
+    <details><summary>2025年 11月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.11.30</span><span class="title">お便り回</span></div><a href="https://x.com/tokyofm/status/1994944468588663228?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.11.23</span><span class="title">渋谷龍太さんゲスト③</span></div><a href="https://x.com/tokyofm/status/1992407753424323056?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.11.16</span><span class="title">渋谷龍太さんゲスト②</span></div><a href="https://x.com/tokyofm/status/1989871038336045186?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.11.09</span><span class="title">渋谷龍太さんゲスト①</span></div><a href="https://x.com/tokyofm/status/1987334323746242927?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.11.02</span><span class="title">最近ハマってる食べ物</span></div><a href="https://x.com/tokyofm/status/1984797608309563804?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 10月 -->
+    <details><summary>2025年 10月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.10.26</span><span class="title">ガチ相談</span></div><a href="https://x.com/tokyofm/status/1982260893204574519?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.10.19</span><span class="title">平成を振り返る</span></div><a href="https://x.com/tokyofm/status/1979724178166006187?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.10.12</span><span class="title">timelesz近況・ドラマ裏話</span></div><a href="https://x.com/tokyofm/status/1977187463127818514?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.10.05</span><span class="title">番組開始半年・10年後の自分</span></div><a href="https://x.com/tokyofm/status/1974650747959861408?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 9月 -->
+    <details><summary>2025年 9月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.09.28</span><span class="title">境界線について</span></div><a href="https://x.com/tokyofm/status/1972114033043231061?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.09.21</span><span class="title">お守りワード・悩み相談</span></div><a href="https://x.com/tokyofm/status/1969577317945991423?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.09.14</span><span class="title">サウジアラビア・履歴書</span></div><a href="https://x.com/tokyofm/status/1967040603461505487?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.09.07</span><span class="title">好きな匂い・夏メッセージ</span></div><a href="https://x.com/tokyofm/status/1964503888503197981?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 8月 -->
+    <details><summary>2025年 8月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.08.31</span><span class="title">勝手に菊池研究所</span></div><a href="https://x.com/tokyofm/status/1961967173364244547?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.08.24</span><span class="title">timelesz・写真集トーク</span></div><a href="https://x.com/tokyofm/status/1959430458477092868?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.08.17</span><span class="title">ハマりもの・日用品のこだわり</span></div><a href="https://x.com/tokyofm/status/1956893743241412644?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.08.10</span><span class="title">お盆・学生時代の夏休み</span></div><a href="https://x.com/tokyofm/status/1954357028190667205?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.08.03</span><span class="title">夏の過ごし方・ルーティン</span></div><a href="https://x.com/tokyofm/status/1951820312812962249?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 7月 -->
+    <details><summary>2025年 7月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.07.27</span><span class="title">新コーナー開始</span></div><a href="https://x.com/tokyofm/status/1949283598068339006?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.07.20</span><span class="title">海の日・バスケキャスター</span></div><a href="https://x.com/tokyofm/status/1946746882753188009?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.07.13</span><span class="title">検索履歴・見られたくないもの</span></div><a href="https://x.com/tokyofm/status/1944210167672782984?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.07.06</span><span class="title">整理整頓術トーク</span></div><a href="https://x.com/tokyofm/status/1941673452756488646?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 6月 -->
+    <details><summary>2025年 6月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.06.29</span><span class="title">夏トーク・ゆるゆる雑談</span></div><a href="https://x.com/tokyofm/status/1939136738116681801?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.06.22</span><span class="title">「照れる」・リリー・フランキー</span></div><a href="https://x.com/tokyofm/status/1936600022445183136?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.06.15</span><span class="title">洗濯・片付けトーク</span></div><a href="https://x.com/tokyofm/status/1934063307519881255?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.06.08</span><span class="title">FAMオンエア</span></div><a href="https://x.com/tokyofm/status/1931526592595108345?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.06.01</span><span class="title">焦ったシチュエーション</span></div><a href="https://x.com/tokyofm/status/1928989877380542783?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 5月 -->
+    <details><summary>2025年 5月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.05.25</span><span class="title">ゲスト回iriさん後編</span></div><a href="https://x.com/tokyofm/status/1926453162552012945?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.05.18</span><span class="title">ゲスト回iriさん前編</span></div><a href="https://x.com/tokyofm/status/1923916447128092862?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.05.11</span><span class="title">母の日・プライベート話</span></div><a href="https://x.com/tokyofm/status/1921395044231020871?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.05.04</span><span class="title">真相をお話します・仕事裏話</span></div><a href="https://x.com/tokyofm/status/1918843017668018252?s=465" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+
+    <!-- 2025年 4月 -->
+    <details><summary>2025年 4月</summary>
+      <div class="card-item"><div class="info"><span class="date">25.04.27</span><span class="title">真相をお話します・質問回答</span></div><a href="https://x.com/tokyofm/status/1916336637933441420?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.04.13</span><span class="title">新メンバー5人出演回</span></div><a href="https://x.com/tokyofm/status/1911245454559367358?s=46" target="_blank" class="x-btn">𝕏</a></div>
+      <div class="card-item"><div class="info"><span class="date">25.04.06</span><span class="title">番組開始</span></div><a href="https://x.com/tokyofm/status/1908725815355072556?s=46" target="_blank" class="x-btn">𝕏</a></div>
+    </details>
+  </div>
+
+  <!-- ================= 2. 勝利 / 原セクション ================= -->
+  <div id="section-shori" class="radio-section">
+    <h2 style="color: #7b1fa2; font-size: 2.2rem; text-align: center; margin-bottom: 30px;">勝利 / 原のラジオまとめ</h2>
+    <details open><summary>2026年 8月</summary>
+      <div class="card-item">
+        <div class="info"><span class="date">26.08.20</span><span class="title">勝利＆原コンビで最近のプライベート語り</span></div>
+        <a href="https://x.com/" target="_blank" class="x-btn">𝕏</a>
+      </div>
+    </details>
+  </div>
+
+  <!-- ================= 3. しのセクション ================= -->
+  <div id="section-shino" class="radio-section">
+    <h2 style="color: #7b1fa2; font-size: 2.2rem; text-align: center; margin-bottom: 30px;">しののラジオまとめ</h2>
+    <details open><summary>2026年 8月</summary>
+      <div class="card-item">
+        <div class="info"><span class="date">26.08.18</span><span class="title">しののラジオ：まったり近況雑談回</span></div>
+        <a href="https://x.com/" target="_blank" class="x-btn">𝕏</a>
+      </div>
+    </details>
+  </div>
+
+  <!-- 管理者ログイン切り替えボタン -->
   <div class="footer-admin">
     <button class="admin-toggle-btn" id="admin-toggle-btn" onclick="toggleAdmin()">⚙️ 管理者ログイン</button>
   </div>
 </div>
 
 <script>
-  // 初期データ（サンプル）
-  const initialRadioData = [
-    { id: 1, category: "FUMA", date: "26.08.23", title: "夏の思い出と最近の近況トーク", url: "https://x.com/tokyofm/status/2091339640762704035?s=46" },
-    { id: 2, category: "FUMA", date: "26.08.16", title: "お盆休みの過ごし方とメッセージ", url: "https://x.com/tokyofm/status/2088802925573185931?s=46" },
-    { id: 3, category: "SHORI", date: "26.08.20", title: "勝利＆原コンビで最近のプライベート語り", url: "https://x.com/" },
-    { id: 4, category: "SHINO", date: "26.08.18", title: "しののラジオ：まったり近況雑談回", url: "https://x.com/" }
-  ];
-
-  let radioData = [];
-  const savedData = localStorage.getItem("oshi_radio_data_v2");
-  if (savedData) {
-    try { radioData = JSON.parse(savedData); } catch (e) { radioData = initialRadioData; }
-  } else {
-    radioData = initialRadioData;
-    saveData();
-  }
-
-  let currentFilter = "ALL";
   let isAdmin = sessionStorage.getItem("oshi_radio_admin") === "true";
-
-  function saveData() {
-    localStorage.setItem("oshi_radio_data_v2", JSON.stringify(radioData));
-  }
 
   function updateAdminUI() {
     const body = document.getElementById("body-root");
@@ -329,7 +440,6 @@
       btn.textContent = "⚙️ 管理者ログイン";
       btn.classList.remove("logged-in");
     }
-    renderList();
   }
 
   function toggleAdmin() {
@@ -353,90 +463,69 @@
     updateAdminUI();
   }
 
-  function switchTab(category, element) {
-    currentFilter = category;
+  function switchTab(targetSection, element) {
+    // タブのアクティブ切替
     document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
     element.classList.add("active");
-    renderList();
+
+    // セクションの切替
+    document.querySelectorAll(".radio-section").forEach(sec => sec.classList.remove("active-section"));
+    document.getElementById("section-" + targetSection).classList.add("active-section");
   }
 
-  function addNewRadioItem() {
-    const category = document.getElementById("input-category").value;
-    const date = document.getElementById("input-date").value.trim();
-    const title = document.getElementById("input-title").value.trim();
-    const url = document.getElementById("input-url").value.trim();
+  function addNewRadio() {
+    const target = document.getElementById("add-target").value;
+    const ym = document.getElementById("add-yearmonth").value.trim();
+    const date = document.getElementById("add-date").value.trim();
+    const title = document.getElementById("add-title").value.trim();
+    const url = document.getElementById("add-url").value.trim();
 
-    if (!date || !title || !url) {
+    if (!ym || !date || !title || !url) {
       alert("すべての項目を入力してください！");
       return;
     }
 
-    const newItem = {
-      id: Date.now(),
-      category,
-      date,
-      title,
-      url
-    };
+    const section = document.getElementById("section-" + target);
+    
+    // 該当する年月(summary)がすでに存在するか探す
+    let targetDetails = null;
+    const detailsList = section.querySelectorAll("details");
+    for (let d of detailsList) {
+      const summary = d.querySelector("summary");
+      if (summary && summary.textContent.includes(ym)) {
+        targetDetails = d;
+        break;
+      }
+    }
 
-    radioData.unshift(newItem);
-    saveData();
-    renderList();
+    // なければ新しく作る
+    if (!targetDetails) {
+      targetDetails = document.createElement("details");
+      targetDetails.open = true;
+      targetDetails.innerHTML = `<summary>${ym}</summary>`;
+      // h2の直後（またはセクションの最初）に挿入
+      const h2 = section.querySelector("h2");
+      h2.after(targetDetails);
+    }
+
+    // カードアイテムを作成して追加
+    const newItem = document.createElement("div");
+    newItem.className = "card-item";
+    newItem.innerHTML = `
+      <a href="${url}" target="_blank" class="info">
+        <span class="date">${date}</span>
+        <span class="title">${title}</span>
+      </a>
+      <a href="${url}" target="_blank" class="x-btn">𝕏</a>
+    `;
+    targetDetails.appendChild(newItem);
 
     // フォームクリア
-    document.getElementById("input-date").value = "";
-    document.getElementById("input-title").value = "";
-    document.getElementById("input-url").value = "";
-    alert("追加しました！");
-  }
-
-  function deleteItem(id) {
-    if (!isAdmin) return;
-    if (confirm("この項目を削除しますか？")) {
-      radioData = radioData.filter(item => item.id !== id);
-      saveData();
-      renderList();
-    }
-  }
-
-  function getBadgeHTML(category) {
-    if (category === "FUMA") return `<span class="badge-fuma">菊池風磨</span>`;
-    if (category === "SHORI") return `<span class="badge-shori">勝利 / 原</span>`;
-    if (category === "SHINO") return `<span class="badge-shino">しの</span>`;
-    return "";
-  }
-
-  function renderList() {
-    const container = document.getElementById("radio-list");
-    container.innerHTML = "";
-
-    const filtered = currentFilter === "ALL" 
-      ? radioData 
-      : radioData.filter(item => item.category === currentFilter);
-
-    if (filtered.length === 0) {
-      container.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 30px;">データがありません</div>`;
-      return;
-    }
-
-    filtered.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "radio-card";
-      card.innerHTML = `
-        <a href="${item.url}" target="_blank" class="radio-info">
-          <div class="meta-row">
-            ${getBadgeHTML(item.category)}
-            <span class="card-date">${item.date}</span>
-          </div>
-          <div class="card-title">${item.title}</div>
-        </a>
-        <div class="card-actions">
-          <a href="${item.url}" target="_blank" class="x-link-btn" title="Xを開く">𝕏</a>
-          <button class="delete-btn" onclick="deleteItem(${item.id})" title="削除">🗑️</button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
+    document.getElementById("add-yearmonth").value = "";
+    document.getElementById("add-date").value = "";
+    document.getElementById("add-title").value = "";
+    document.getElementById("add-url").value = "";
+    alert("新しいラジオを追加しました！");
   }
 
   // 初期化
