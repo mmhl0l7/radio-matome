@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Radio log.</title>
-  <!-- ホーム画面追加時のアイコンや挙動の設定 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Radio log.">
@@ -68,7 +67,7 @@
       transform: rotate(180deg);
     }
 
-    /* タブ切り替えボタンエリア（ピル型） */
+    /* タブ切り替えボタンエリア */
     .nav-tabs {
       display: flex;
       gap: 10px;
@@ -100,7 +99,6 @@
       box-shadow: 0 4px 10px rgba(58, 46, 51, 0.2);
     }
 
-    /* セクション切り替え */
     .radio-section { display: none; }
     .radio-section.active-section { display: block; }
 
@@ -114,7 +112,6 @@
       border: 1px solid var(--border-color);
     }
     
-    /* 年月表示 */
     summary { 
       font-weight: 600; 
       color: var(--accent-dark); 
@@ -130,7 +127,6 @@
     summary::-webkit-details-marker { display: none; }
     summary::after { content: '▾'; font-size: 1.2rem; color: var(--text-muted); }
     
-    /* 項目間のレイアウト（日付とXボタンのみ） */
     .card-item { 
       display: flex; 
       justify-content: space-between; 
@@ -140,7 +136,6 @@
       margin-top: 15px;
     }
     
-    /* 日付表示 */
     .date { 
       font-size: 1.1rem; 
       color: var(--text-main); 
@@ -150,7 +145,6 @@
       border-radius: 12px;
     }
     
-    /* Xボタン（丸型ダークブラウン） */
     .x-btn { 
       background-color: var(--accent-dark); 
       color: white; 
@@ -169,7 +163,7 @@
     }
     .x-btn:hover { opacity: 0.8; }
 
-    /* 追加・管理エリアのスタイル（通常時は完全非表示） */
+    /* 管理者パネル */
     .admin-panel {
       background: var(--card-bg);
       border-radius: 24px;
@@ -207,13 +201,30 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+    /* 削除ボタン（管理者モード時のみ項目の横に小さく出る用） */
+    .delete-item-btn {
+      background: #e6c5cc;
+      color: var(--accent-dark);
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .item-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
   </style>
 </head>
 <body id="body-root">
 
 <div class="radio-container">
   <div class="header-area">
-    <!-- タイトルを5回連続タップすると管理者ログインになります -->
+    <!-- タイトル「Radio log.」を5回連続タップで管理者ログイン -->
     <h1 class="main-title" id="secret-title">Radio log.</h1>
     <button class="refresh-btn" onclick="location.reload()" title="更新">🔄</button>
   </div>
@@ -225,7 +236,7 @@
     <button class="tab-btn" onclick="switchTab('shino', this)">…＆シノ！from timelesz</button>
   </div>
 
-  <!-- 管理者用：新規追加パネル (隠しモード時のみ表示) -->
+  <!-- 管理者用：新規追加パネル -->
   <div class="admin-panel">
     <h3>
       <span>＋ 新しい回を追加</span>
@@ -239,10 +250,10 @@
       </select>
     </div>
     <div class="form-row">
-      <input type="text" id="add-yearmonth" placeholder="表示する年月 (例: 2026年 9月)">
+      <input type="text" id="add-yearmonth" placeholder="表示する年月 (例: 2026年 8月)">
     </div>
     <div class="form-row">
-      <input type="text" id="add-date" placeholder="日付 (例: 26.09.06)">
+      <input type="text" id="add-date" placeholder="日付 (例: 26.08.30)">
     </div>
     <div class="form-row">
       <input type="text" id="add-url" placeholder="X (Twitter) のURL">
@@ -250,32 +261,68 @@
     <button class="submit-btn" onclick="addNewRadio()">追加を保存する</button>
   </div>
 
-  <!-- ================= 1. 菊池風磨 hoursz セクション ================= -->
-  <div id="section-fuma" class="radio-section active-section">
-    <details open><summary>2026年 8月</summary>
-      <div class="card-item"><span class="date">26.08.23</span><a href="https://x.com/tokyofm/status/2091339640762704035?s=46" target="_blank" class="x-btn">𝕏</a></div>
-      <div class="card-item"><span class="date">26.08.16</span><a href="https://x.com/tokyofm/status/2088802925573185931?s=46" target="_blank" class="x-btn">𝕏</a></div>
-      <div class="card-item"><span class="date">26.08.09</span><a href="https://x.com/tokyofm/status/2086266210598129724?s=46" target="_blank" class="x-btn">𝕏</a></div>
-    </details>
-  </div>
-
-  <!-- ================= 2. レコメン❤️🎽 セクション ================= -->
-  <div id="section-shori" class="radio-section">
-    <details open><summary>2026年 8月</summary>
-      <div class="card-item"><span class="date">26.08.20</span><a href="https://x.com/" target="_blank" class="x-btn">𝕏</a></div>
-    </details>
-  </div>
-
-  <!-- ================= 3. …＆シノ！from timelesz セクション ================= -->
-  <div id="section-shino" class="radio-section">
-    <details open><summary>2026年 8月</summary>
-      <div class="card-item"><span class="date">26.08.18</span><a href="https://x.com/" target="_blank" class="x-btn">𝕏</a></div>
-    </details>
-  </div>
+  <!-- 各セクション (JavaScriptで自動描画されます) -->
+  <div id="section-fuma" class="radio-section active-section"></div>
+  <div id="section-shori" class="radio-section"></div>
+  <div id="section-shino" class="radio-section"></div>
 
 </div>
 
 <script>
+  // デフォルトデータ（初めて開いた時、またはデータがない場合の初期値）
+  const defaultData = {
+    fuma: {
+      "2026年 8月": [
+        { date: "26.08.23", url: "https://x.com/tokyofm/status/2091339640762704035?s=46" },
+        { date: "26.08.16", url: "https://x.com/tokyofm/status/2088802925573185931?s=46" },
+        { date: "26.08.09", url: "https://x.com/tokyofm/status/2086266210598129724?s=46" }
+      ]
+    },
+    shori: {
+      "2026年 8月": [
+        { date: "26.08.20", url: "https://x.com/" }
+      ]
+    },
+    shino: {
+      "2026年 8月": [
+        { date: "26.08.18", url: "https://x.com/" }
+      ]
+    }
+  };
+
+  // ローカルストレージからデータを読み込み（なければデフォルト）
+  let radioData = JSON.parse(localStorage.getItem("oshi_radio_data")) || defaultData;
+
+  function saveData() {
+    localStorage.setItem("oshi_radio_data", JSON.stringify(radioData));
+  }
+
+  // 画面を描画する関数
+  function renderAll() {
+    ['fuma', 'shori', 'shino'].forEach(target => {
+      const sectionEl = document.getElementById("section-" + target);
+      const months = radioData[target] || {};
+      
+      let html = "";
+      for (const [ym, items] of Object.entries(months)) {
+        html += `<details open><summary>${ym}</summary>`;
+        items.forEach((item, index) => {
+          html += `
+            <div class="card-item">
+              <span class="date">${item.date}</span>
+              <div class="item-right">
+                <a href="${item.url}" target="_blank" class="x-btn">𝕏</a>
+                ${isAdmin ? `<button class="delete-item-btn" onclick="deleteItem('${target}', '${ym}',${index})">削除</button>` : ''}
+              </div>
+            </div>
+          `;
+        });
+        html += `</details>`;
+      }
+      sectionEl.innerHTML = html;
+    });
+  }
+
   let isAdmin = sessionStorage.getItem("oshi_radio_admin") === "true";
 
   function updateAdminUI() {
@@ -285,6 +332,7 @@
     } else {
       body.classList.remove("admin-mode");
     }
+    renderAll();
   }
 
   // 隠し管理者ログイン（左上の「Radio log.」を5回連続タップ）
@@ -346,39 +394,36 @@
       return;
     }
 
-    const section = document.getElementById("section-" + target);
-    
-    let targetDetails = null;
-    const detailsList = section.querySelectorAll("details");
-    for (let d of detailsList) {
-      const summary = d.querySelector("summary");
-      if (summary && summary.textContent.includes(ym)) {
-        targetDetails = d;
-        break;
-      }
+    if (!radioData[target]) {
+      radioData[target] = {};
+    }
+    if (!radioData[target][ym]) {
+      radioData[target][ym] = [];
     }
 
-    if (!targetDetails) {
-      targetDetails = document.createElement("details");
-      targetDetails.open = true;
-      targetDetails.innerHTML = `<summary>${ym}</summary>`;
-      section.prepend(targetDetails);
-    }
-
-    const newItem = document.createElement("div");
-    newItem.className = "card-item";
-    newItem.innerHTML = `
-      <span class="date">${date}</span>
-      <a href="${url}" target="_blank" class="x-btn">𝕏</a>
-    `;
-    targetDetails.appendChild(newItem);
+    // 新しいものを先頭に追加
+    radioData[target][ym].unshift({ date, url });
+    saveData();
+    renderAll();
 
     document.getElementById("add-yearmonth").value = "";
     document.getElementById("add-date").value = "";
     document.getElementById("add-url").value = "";
-    alert("新しいラジオを追加しました！");
+    alert("新しいラジオを追加して保存しました！");
   }
 
+  function deleteItem(target, ym, index) {
+    if (confirm("この記録を削除しますか？")) {
+      radioData[target][ym].splice(index, 1);
+      if (radioData[target][ym].length === 0) {
+        delete radioData[target][ym];
+      }
+      saveData();
+      renderAll();
+    }
+  }
+
+  // 初期描画
   updateAdminUI();
 </script>
 
