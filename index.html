@@ -564,13 +564,40 @@
     localStorage.setItem("oshi_radio_favs_v6", JSON.stringify(favorites));
   }
 
+  function getFavState(target, itemKey) {
+    const favObj = favorites.find(f => typeof f === 'object' && f.key === itemKey);
+    if (!favObj) return { isFav: false, icon: '🤍' };
+
+    if (target === 'shori') {
+      return { isFav: true, icon: favObj.customIcon || '❤️' };
+    } else if (target === 'shino') {
+      return { isFav: true, icon: '🩷' };
+    } else {
+      return { isFav: true, icon: '💜' };
+    }
+  }
+
   function toggleFavorite(target, ym, index) {
     const itemKey = `${target}_${ym}_${index}`;
-    const idx = favorites.indexOf(itemKey);
-    if (idx > -1) {
-      favorites.splice(idx, 1);
+    const existingIndex = favorites.findIndex(f => (typeof f === 'string' ? f === itemKey : f.key === itemKey));
+
+    if (existingIndex > -1) {
+      const currentFav = favorites[existingIndex];
+      if (target === 'shori') {
+        const currentIcon = (typeof currentFav === 'object') ? currentFav.customIcon : '❤️';
+        if (currentIcon === '❤️') {
+          favorites[existingIndex] = { key: itemKey, customIcon: '🎽' };
+        } else {
+          favorites.splice(existingIndex, 1);
+        }
+      } else {
+        favorites.splice(existingIndex, 1);
+      }
     } else {
-      favorites.push(itemKey);
+      let initialIcon = '💜';
+      if (target === 'shori') initialIcon = '❤️';
+      if (target === 'shino') initialIcon = '🩷';
+      favorites.push({ key: itemKey, customIcon: initialIcon });
     }
     saveFavs();
     renderAll();
@@ -591,7 +618,7 @@
         html += `<details open><summary>${ym}</summary>`;
         items.forEach((item, index) => {
           const itemKey = `${target}_${ym}_${index}`;
-          const isFav = favorites.includes(itemKey);
+          const state = getFavState(target, itemKey);
           html += `
             <div class="card-item">
               <a href="${item.url}" target="_blank" class="info" style="text-decoration: none;">
@@ -599,7 +626,7 @@
                 <span class="title">${item.title}</span>
               </a>
               <div class="item-right-group">
-                <button class="fav-btn" onclick="toggleFavorite('${target}', '${ym}', ${index})" title="お気に入り">${isFav ? '❤️' : '🤍'}</button>
+                <button class="fav-btn" onclick="toggleFavorite('${target}', '${ym}', ${index})" title="お気に入り">${state.icon}</button>
                 <a href="${item.url}" target="_blank" class="x-btn">𝕏</a>
                 ${isAdmin ? `<button class="delete-item-btn" onclick="deleteItem('${target}', '${ym}',${index})">削除</button>` : ''}
               </div>
@@ -616,13 +643,15 @@
       favContainer.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding: 20px;">お気に入りの放送回にハートをつけてみましょう！</p>`;
     } else {
       let favHtml = "";
-      favorites.forEach(key => {
-        const parts = key.split('_');
+      favorites.forEach(fav => {
+        const itemKey = (typeof fav === 'string') ? fav : fav.key;
+        const parts = itemKey.split('_');
         const target = parts[0];
         const ym = parts[1];
         const index = parts[2];
         const item = radioData[target]?.[ym]?.[index];
         if (item) {
+          const state = getFavState(target, itemKey);
           const targetName = target === 'fuma' ? '菊池風磨 hoursz' : target === 'shori' ? 'レコメン❤️🎽' : '…＆シノ！';
           favHtml += `
             <div class="card-item">
@@ -631,7 +660,7 @@
                 <span class="title">${item.title}</span>
               </a>
               <div class="item-right-group">
-                <button class="fav-btn" onclick="toggleFavorite('${target}', '${ym}', ${index})">❤️</button>
+                <button class="fav-btn" onclick="toggleFavorite('${target}', '${ym}', ${index})">${state.icon}</button>
                 <a href="${item.url}" target="_blank" class="x-btn">𝕏</a>
               </div>
             </div>
