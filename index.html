@@ -3,106 +3,296 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>菊池風磨 hoursz 📸まとめ</title>
+  <title>📻 菊池風磨 hoursz 📸まとめ</title>
   <style>
-    body { background-color: #f3e5f5; font-family: sans-serif; margin: 0; padding: 30px; padding-bottom: 100px; }
-    .radio-container { max-width: 700px; margin: 0 auto; }
+    :root {
+      --primary: #8e24aa;
+      --primary-light: #ba68c8;
+      --primary-bg: #f8f1fa;
+      --accent-pink: #fce4ec;
+      --text-main: #2d2d2d;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      margin: 0;
+      padding: 25px;
+      padding-bottom: 120px;
+      color: var(--text-main);
+    }
+
+    .radio-container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
     
-    /* タイトルサイズ */
+    /* ヘッダータイトル */
+    .header-box {
+      text-align: center;
+      margin-bottom: 35px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      box-shadow: 0 8px 20px rgba(123, 31, 162, 0.06);
+    }
+
     h2 { 
-      color: #7b1fa2; 
-      text-align: center; 
-      margin-bottom: 30px; 
-      font-size: 3.0rem; 
+      color: var(--primary); 
+      margin: 0; 
+      font-size: 2.6rem; 
+      letter-spacing: 0.05em;
       word-break: break-all; 
     }
     
-    /* カード全体の余白と枠 */
-    details { background: white; border-radius: 35px; padding: 35px 45px; margin-bottom: 35px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    /* アコーディオンカード */
+    details {
+      background: var(--card-bg);
+      border-radius: 28px;
+      padding: 10px 30px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 20px rgba(142, 36, 170, 0.07);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    details[open] {
+      padding-bottom: 20px;
+    }
     
-    /* 年月表示 */
-    summary { font-weight: bold; color: #7b1fa2; padding: 20px 10px; cursor: pointer; outline: none; list-style: none; font-size: 2.5rem; }
-    summary::after { content: ' ▼'; float: right; font-size: 2.0rem; color: #ba68c8; }
+    summary {
+      font-weight: bold;
+      color: var(--primary);
+      padding: 20px 10px;
+      cursor: pointer;
+      outline: none;
+      list-style: none;
+      font-size: 2.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    summary::-webkit-details-marker { display: none; }
     
-    /* 項目間の余白 */
-    .card-item { display: flex; justify-content: space-between; align-items: center; padding: 40px 0; border-top: 2px solid #f3e5f5; position: relative; }
+    summary::after {
+      content: '＋';
+      font-size: 1.8rem;
+      color: var(--primary-light);
+      background: var(--primary-bg);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    details[open] summary::after {
+      content: 'ー';
+      background: var(--accent-pink);
+      transform: rotate(180deg);
+    }
     
-    .info { display: flex; flex-direction: column; flex: 1; text-decoration: none; }
+    /* 項目カード */
+    .card-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 10px;
+      border-top: 2px solid var(--primary-bg);
+      transition: background-color 0.2s;
+    }
+
+    .card-item:hover {
+      background-color: #faf5fb;
+      border-radius: 16px;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
     
-    /* 日付・タイトルサイズ */
-    .date { font-size: 1.8rem; color: #9c27b0; font-weight: bold; }
-    .title { font-size: 2.2rem; color: #333; margin-top: 15px; line-height: 1.5; }
+    .info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      text-decoration: none;
+    }
     
-    /* ボタンサイズ */
-    .x-btn { background-color: #ba68c8; color: white; text-decoration: none; width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.0rem; margin-left: 20px; flex-shrink: 0; }
+    .date {
+      font-size: 1.5rem;
+      color: #ab47bc;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .title {
+      font-size: 1.9rem;
+      color: #333333;
+      margin-top: 10px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    
+    /* Xボタンの洗練 */
+    .x-btn {
+      background: linear-gradient(135deg, #ba68c8, #8e24aa);
+      color: white;
+      text-decoration: none;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.8rem;
+      margin-left: 20px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .x-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 15px rgba(142, 36, 170, 0.4);
+    }
     
     /* 管理者用削除ボタン */
     .admin-delete-btn {
       display: none;
-      background-color: #e57373;
+      background-color: #ff5252;
       color: white;
       border: none;
       border-radius: 50%;
       width: 45px;
       height: 45px;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       cursor: pointer;
-      margin-left: 15px;
+      margin-left: 12px;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 3px 8px rgba(255, 82, 82, 0.3);
     }
     .admin-mode .admin-delete-btn { display: flex; }
 
-    /* 管理者フォーム・ボタンのスタイル */
-    .admin-footer-area { text-align: center; margin: 40px 0 20px 0; }
-    .admin-toggle-btn { background: none; border: 1px solid #ba68c8; color: #7b1fa2; padding: 12px 24px; border-radius: 20px; font-size: 1.2rem; cursor: pointer; font-weight: bold; background-color: #fff; }
-    .admin-toggle-btn.logged-in { background-color: #7b1fa2; color: #fff; }
+    /* 管理者フッター・ログインボタン */
+    .admin-footer-area {
+      text-align: center;
+      margin: 50px 0 20px 0;
+    }
 
+    .admin-toggle-btn {
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid var(--primary-light);
+      color: var(--primary);
+      padding: 12px 28px;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      transition: all 0.2s;
+    }
+
+    .admin-toggle-btn:hover {
+      background: var(--primary-bg);
+    }
+
+    .admin-toggle-btn.logged-in {
+      background-color: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* 新規追加フォーム */
     .form-container {
       display: none;
       background: #fff;
-      border: 3px solid #7b1fa2;
-      border-radius: 25px;
+      border: 2px solid var(--primary-light);
+      border-radius: 28px;
       padding: 30px;
-      margin-bottom: 40px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 35px;
+      box-shadow: 0 10px 25px rgba(123, 31, 162, 0.1);
+      animation: fadeIn 0.3s ease;
     }
+
     .form-container.show { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 1.3rem; font-weight: bold; color: #7b1fa2; margin-bottom: 8px; }
-    .form-group input, .form-group textarea { width: 100%; padding: 15px; border: 2px solid #e1bee7; border-radius: 12px; font-size: 1.3rem; box-sizing: border-box; }
-    .submit-btn { background: #7b1fa2; color: #fff; border: none; width: 100%; padding: 18px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
+    .form-group label { display: block; font-size: 1.2rem; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e1bee7;
+      border-radius: 14px;
+      font-size: 1.2rem;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fcf9fd;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary-light), var(--primary));
+      color: #fff;
+      border: none;
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3);
+      transition: opacity 0.2s;
+    }
+    .submit-btn:hover { opacity: 0.95; }
     
+    /* フローティング追加ボタン */
     .floating-add-btn {
       display: none;
       position: fixed;
       bottom: 25px;
       right: 25px;
-      background: #7b1fa2;
+      background: linear-gradient(135deg, #ba68c8, #7b1fa2);
       color: #fff;
       border: none;
-      padding: 20px 30px;
-      border-radius: 40px;
-      font-size: 1.4rem;
+      padding: 18px 28px;
+      border-radius: 35px;
+      font-size: 1.3rem;
       font-weight: bold;
-      box-shadow: 0 4px 15px rgba(123, 31, 162, 0.4);
+      box-shadow: 0 6px 20px rgba(123, 31, 162, 0.4);
       cursor: pointer;
       z-index: 999;
+      transition: transform 0.2s;
     }
+    .floating-add-btn:hover { transform: scale(1.05); }
     .admin-mode .floating-add-btn { display: block; }
   </style>
 </head>
 <body id="body-root">
 
 <div class="radio-container">
-  <h2>📻 菊池風磨hoursz📸まとめ</h2>
+  <div class="header-box">
+    <h2>📻 菊池風磨 hoursz 📸まとめ</h2>
+  </div>
 
   <!-- 新規追加フォーム（管理者のみ表示） -->
   <div class="form-container" id="admin-form">
-    <div style="font-size: 1.6rem; font-weight: bold; color: #7b1fa2; margin-bottom: 20px;">➕ 新規ラジオ放送回を追加</div>
+    <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary); margin-bottom: 20px;">➕ 新規ラジオ放送回を追加</div>
     <div class="form-group">
-      <label>日付 (例: 2026.08.30 または 26.08.30)</label>
+      <label>日付 (例: 26.08.30)</label>
       <input type="text" id="input-date" placeholder="26.08.30">
     </div>
     <div class="form-group">
@@ -126,10 +316,10 @@
 </div>
 
 <!-- 画面右下のフローティング追加ボタン -->
-<button class="floating-add-btn" onclick="scrollToForm()">＋ 追加</button>
+<button class="floating-add-btn" onclick="scrollToForm()">＋ 新規追加</button>
 
 <script>
-  // 初期データ（ご提示いただいたデータ）
+  // 初期データ
   const initialData = [
     {
       yearMonth: "2026年 8月",
@@ -324,7 +514,7 @@
   function toggleAdminLogin() {
     if (!isAdminLoggedIn) {
       const pwd = prompt("管理者パスワードを入力してください：");
-      if (pwd === "fuma123") { // パスワードは必要に応じて変更してください
+      if (pwd === "fuma123") {
         isAdminLoggedIn = true;
         sessionStorage.setItem("fuma_admin_logged_in", "true");
         alert("管理者としてログインしました！");
@@ -358,7 +548,6 @@
       return;
     }
 
-    // 日付から年月を自動判定 (例: "26.08.23" または "2026.08.23" から年月を作る)
     let yearPart = "2026";
     let monthPart = "1";
     
@@ -368,8 +557,7 @@
     } else if (dateInput.startsWith("26.")) {
       yearPart = "2026";
       monthPart = parseInt(dateInput.substring(3, 5), 10);
-    } else if (dateInput.length >= 4) {
-      // 2026.08 などに対応
+    } else {
       const parts = dateInput.split(/[\.\-\/]/);
       if (parts.length >= 2) {
         yearPart = parts[0].length === 2 ? "20" + parts[0] : parts[0];
@@ -379,11 +567,10 @@
 
     const targetYearMonth = `${yearPart}年 ${monthPart}月`;
 
-    // 該当する年月のグループを探す、なければ新しく作る
     let group = radioData.find(g => g.yearMonth === targetYearMonth);
     if (!group) {
       group = { yearMonth: targetYearMonth, items: [] };
-      radioData.unshift(group); // リストの先頭に追加
+      radioData.unshift(group);
     }
 
     group.items.unshift({ date: dateInput, title: titleInput, url: urlInput });
@@ -391,7 +578,6 @@
     saveToStorage();
     renderList();
 
-    // フォームをクリアして閉じる
     document.getElementById("input-date").value = "";
     document.getElementById("input-title").value = "";
     document.getElementById("input-url").value = "";
@@ -403,7 +589,6 @@
     if (!isAdminLoggedIn) return;
     if (confirm("この項目を削除しますか？")) {
       radioData[ymIndex].items.splice(itemIndex, 1);
-      //もしグループのitemsが空になったらグループ自体を削除
       if (radioData[ymIndex].items.length === 0) {
         radioData.splice(ymIndex, 1);
       }
@@ -418,7 +603,6 @@
 
     radioData.forEach((group, ymIndex) => {
       const details = document.createElement("details");
-      // 一番最初の月（最新）は最初から開いておくなどの演出も可能ですが、お好みで open 属性をつけられます
       if (ymIndex === 0) details.setAttribute("open", "true");
 
       const summary = document.createElement("summary");
@@ -443,7 +627,6 @@
     });
   }
 
-  // 初期描画
   applyAdminUI();
 </script>
 
