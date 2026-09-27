@@ -213,7 +213,7 @@
 
 <div class="radio-container">
   <div class="header-area">
-    <!-- タイトルを3回連続タップすると管理者ログインになります -->
+    <!-- タイトルを5回連続タップすると管理者ログインになります -->
     <h1 class="main-title" id="secret-title">Radio log.</h1>
     <button class="refresh-btn" onclick="location.reload()" title="更新">🔄</button>
   </div>
@@ -287,7 +287,7 @@
     }
   }
 
-  // 隠し管理者ログイン（タイトル文字を3回連続タップ）
+  // 隠し管理者ログイン（左上の「Radio log.」を5回連続タップ）
   let touchCount = 0;
   let touchTimer = null;
   const titleEl = document.getElementById("secret-title");
@@ -296,13 +296,13 @@
     touchCount++;
     clearTimeout(touchTimer);
     
-    if (touchCount >= 3) {
+    if (touchCount >= 5) {
       triggerAdminLogin();
       touchCount = 0;
     } else {
       touchTimer = setTimeout(() => {
         touchCount = 0;
-      }, 600);
+      }, 800);
     }
   });
 
