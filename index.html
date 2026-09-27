@@ -9,13 +9,14 @@
   <meta name="apple-mobile-web-app-title" content="Radio log.">
   <style>
     :root {
-      --bg-color: #f3e5f5;
-      --card-bg: #ffffff;
-      --text-main: #333333;
-      --text-muted: #8c7b80;
-      --accent-dark: #7b1fa2;
-      --accent-light: #ba68c8;
-      --border-color: #f3e5f5;
+      --bg-color: #f7f1f2;         /* 画像の淡いピンクベージュ系の背景 */
+      --card-bg: #ffffff;          /* クリーンな白カード */
+      --text-main: #3a2e31;        /* 濃いダークブラウン/プラム */
+      --text-muted: #9c8a8e;       /* 控えめなグレーピンク */
+      --accent-dark: #3a2e31;      /* アクティブ・見出し用のダークカラー */
+      --accent-pill: #3a2e31;      /* 選択中タブ・ボタンの背景 */
+      --border-color: #f0e3e6;     /* 薄い境界線 */
+      --badge-bg: #efe6e8;         /* タグなどの背景色 */
     }
 
     body { 
@@ -23,57 +24,108 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
       color: var(--text-main);
       margin: 0; 
-      padding: 30px; 
+      padding: 20px; 
       padding-bottom: 120px;
       -webkit-tap-highlight-color: transparent;
     }
-    .radio-container { max-width: 700px; margin: 0 auto; }
+    .radio-container { max-width: 650px; margin: 0 auto; }
     
-    /* ヘッダーエリア */
-    .header-area {
+    /* 上部ナビゲーション＆タイトルエリア */
+    .top-nav-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
+      padding-top: 10px;
     }
+
     h1.main-title { 
       font-family: "Playfair Display", Georgia, serif;
       font-style: italic;
-      color: var(--accent-dark); 
+      color: var(--text-main); 
       margin: 0; 
-      font-size: 2.5rem; 
+      font-size: 2.2rem; 
       letter-spacing: -0.5px;
       cursor: pointer;
       user-select: none;
-      word-break: break-all;
+    }
+
+    /* 画像のような上部ミニアイコン群 */
+    .icon-navs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 6px 10px;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .icon-tab {
+      background: transparent;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .icon-tab.active {
+      background: var(--accent-pill);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(58, 46, 49, 0.2);
     }
     
     /* くるくる回る更新ボタン */
     .refresh-btn {
       background: var(--card-bg);
-      border: 2px solid var(--accent-light);
-      color: var(--accent-dark);
-      width: 45px;
-      height: 45px;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
       transition: transform 0.6s ease;
       outline: none;
+      flex-shrink: 0;
     }
     .refresh-btn.rotating {
       transform: rotate(360deg);
     }
 
-    /* タブ切り替えボタンエリア（ピル型） */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* サブタイトル・説明 */
+    .subtitle-text {
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+      margin-top: -15px;
+    }
+
+    /* タブ切り替えボタンエリア（ピル型・画像下部風） */
     .nav-tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
+      gap: 8px;
+      margin-bottom: 25px;
       overflow-x: auto;
       padding-bottom: 5px;
       scrollbar-width: none;
@@ -82,60 +134,62 @@
 
     .tab-btn {
       background: var(--card-bg);
-      border: 2px solid var(--accent-light);
-      padding: 12px 20px;
-      border-radius: 25px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: var(--accent-light);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .tab-btn.active {
-      background: var(--accent-dark);
+      background: var(--accent-pill);
       color: #ffffff;
-      border-color: var(--accent-dark);
-      box-shadow: 0 4px 10px rgba(123, 31, 162, 0.3);
+      border-color: var(--accent-pill);
+      box-shadow: 0 3px 8px rgba(58, 46, 49, 0.25);
     }
 
     .radio-section { display: none; }
     .radio-section.active-section { display: block; }
 
-    /* カード全体の余白と枠 */
+    /* カード全体の余白と枠（画像のようなすっきりした白カード） */
     details { 
       background: var(--card-bg); 
-      border-radius: 35px; 
-      padding: 35px 45px; 
-      margin-bottom: 35px; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+      border-radius: 20px; 
+      padding: 18px 22px; 
+      margin-bottom: 20px; 
+      box-shadow: 0 4px 12px rgba(58, 46, 49, 0.03); 
+      border: 1px solid rgba(255,255,255,0.8);
     }
     
     summary { 
       font-weight: bold; 
-      color: var(--accent-dark); 
-      padding: 10px 10px; 
+      color: var(--text-main); 
+      padding: 4px; 
       cursor: pointer; 
       outline: none; 
       list-style: none; 
-      font-size: 2.5rem; 
+      font-size: 1.3rem; 
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-family: "Playfair Display", Georgia, serif;
     }
     summary::-webkit-details-marker { display: none; }
-    summary::after { content: '▼'; font-size: 1.8rem; color: var(--accent-light); }
+    summary::after { content: '▾'; font-size: 1rem; color: var(--text-muted); }
     
     /* 項目間のレイアウト */
     .card-item { 
       display: flex; 
       justify-content: space-between; 
       align-items: center; 
-      padding: 30px 0; 
-      border-top: 2px solid var(--border-color); 
-      margin-top: 15px;
+      padding: 16px 0; 
+      border-top: 1px solid var(--border-color); 
+      margin-top: 8px;
     }
     
     .info { 
@@ -146,114 +200,126 @@
     }
     
     .date { 
-      font-size: 1.8rem; 
-      color: var(--accent-dark); 
-      font-weight: bold; 
+      font-size: 0.85rem; 
+      color: var(--text-muted); 
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
     
     .title { 
-      font-size: 2.0rem; 
+      font-size: 1.05rem; 
       color: var(--text-main); 
-      margin-top: 12px; 
+      margin-top: 4px; 
       line-height: 1.4; 
     }
     
+    /* Xボタン（画像の丸いミニバッジ風） */
     .x-btn { 
-      background-color: var(--accent-light); 
-      color: white; 
+      background-color: var(--badge-bg); 
+      color: var(--text-main); 
       text-decoration: none; 
-      width: 75px; 
-      height: 75px; 
+      width: 38px; 
+      height: 38px; 
       border-radius: 50%; 
       display: flex; 
       justify-content: center; 
       align-items: center; 
-      font-size: 2.0rem; 
-      margin-left: 20px;
+      font-size: 1rem; 
+      margin-left: 12px;
       flex-shrink: 0; 
-      box-shadow: 0 3px 8px rgba(186, 104, 200, 0.3);
-      transition: opacity 0.2s;
+      transition: all 0.2s;
     }
-    .x-btn:hover { opacity: 0.8; }
+    .x-btn:hover { background-color: var(--accent-pill); color: #fff; }
 
     /* 管理者パネル */
     .admin-panel {
       background: var(--card-bg);
-      border-radius: 25px;
-      padding: 25px;
-      margin-bottom: 35px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      border: 2px solid var(--accent-light);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
       display: none;
     }
     .admin-mode .admin-panel { display: block; }
 
-    .admin-panel h3 { color: var(--accent-dark); margin-top: 0; font-size: 1.4rem; display: flex; justify-content: space-between; align-items: center;}
-    .logout-text-btn { font-size: 0.9rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+    .admin-panel h3 { color: var(--text-main); margin-top: 0; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;}
+    .logout-text-btn { font-size: 0.85rem; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
     
-    .form-row { margin-bottom: 15px; }
+    .form-row { margin-bottom: 12px; }
     .form-row input, .form-row select {
       width: 100%;
-      padding: 14px 18px;
-      border: 2px solid var(--border-color);
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
       background: var(--bg-color);
-      border-radius: 15px;
-      font-size: 1.1rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
       box-sizing: border-box;
       outline: none;
       color: var(--text-main);
     }
     .submit-btn {
-      background: var(--accent-dark);
+      background: var(--accent-pill);
       color: white;
       border: none;
       width: 100%;
-      padding: 16px;
-      border-radius: 15px;
-      font-size: 1.2rem;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
       font-weight: bold;
       cursor: pointer;
     }
 
-    /* 管理者用削除ボタン */
     .item-right {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 10px;
     }
     .delete-item-btn {
-      background: #e6c5cc;
-      color: #7b1fa2;
+      background: #fbebee;
+      color: #b85c6c;
       border: none;
-      padding: 10px 15px;
-      border-radius: 12px;
-      font-size: 1rem;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
       font-weight: bold;
       cursor: pointer;
     }
 
     @media (max-width: 600px) {
-      summary { font-size: 2.0rem; }
-      .date { font-size: 1.5rem; }
-      .title { font-size: 1.6rem; }
-      .x-btn { width: 60px; height: 60px; font-size: 1.6rem; }
+      body { padding: 15px; }
+      h1.main-title { font-size: 1.8rem; }
+      summary { font-size: 1.2rem; }
+      .title { font-size: 1rem; }
     }
   </style>
 </head>
 <body id="body-root">
 
 <div class="radio-container">
-  <div class="header-area">
-    <!-- 左上のタイトルを5回連続タップで管理者モード -->
-    <h1 class="main-title" id="secret-title">📻 菊池風磨hoursz📸まとめ</h1>
-    <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()" title="更新">🔄</button>
+  
+  <!-- 上部ナビゲーションエリア（画像のデザインを再現） -->
+  <div class="top-nav-bar">
+    <h1 class="main-title" id="secret-title">Radio log.</h1>
+    <div class="header-actions">
+      <!-- 上部ミニアイコンタブ群 -->
+      <div class="icon-navs">
+        <button class="icon-tab active" title="ホーム">🏠</button>
+        <button class="icon-tab" title="ノート">📖</button>
+        <button class="icon-tab" title="カレンダー">📅</button>
+        <button class="icon-tab" title="タイマー">⏱️</button>
+      </div>
+      <!-- くるくる回る更新ボタン -->
+      <button class="refresh-btn" id="refresh-btn" onclick="triggerRefresh()" title="更新">🔄</button>
+    </div>
   </div>
+  <div class="subtitle-text">Archive records &amp; memories. No schedule pressure.</div>
 
-  <!-- タブ切り替えボタン -->
+  <!-- メインタブ切り替えボタン -->
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="switchTab('fuma', this)">菊池風磨 hoursz</button>
-    <button class="tab-btn" onclick="switchTab('shori', this)">レコメン❤️🎽</button>
-    <button class="tab-btn" onclick="switchTab('shino', this)">…＆シノ！from timelesz</button>
+    <button class="tab-btn active" onclick="switchMainTab('fuma', this)">菊池風磨 hoursz</button>
+    <button class="tab-btn" onclick="switchMainTab('shori', this)">レコメン❤️🎽</button>
+    <button class="tab-btn" onclick="switchMainTab('shino', this)">…＆シノ！from timelesz</button>
   </div>
 
   <!-- 管理者用：新規追加パネル -->
@@ -295,16 +361,15 @@
   // ホーム画面から起動した際、古いキャッシュを回避して強制自動リフレッシュさせる仕組み
   (function() {
     if (window.navigator.standalone) {
-      const lastCheck = sessionStorage.getItem("pwa_refreshed");
+      const lastCheck = sessionStorage.getItem("pwa_refreshed_v4");
       if (!lastCheck) {
-        sessionStorage.setItem("pwa_refreshed", "true");
-        // キャッシュを無視してブラウザの再読み込みを強制実行
+        sessionStorage.setItem("pwa_refreshed_v4", "true");
         window.location.replace(window.location.href.split('?')[0] + '?t=' + new Date().getTime());
       }
     }
   })();
 
-  // 2025年4月からの全データを含む初期データ
+  // 菊池風磨 hoursz の2025年4月からの全データ
   const defaultData = {
     fuma: {
       "2026年 8月": [
@@ -412,22 +477,14 @@
         { date: "25.04.06", title: "番組開始", url: "https://x.com/tokyofm/status/1908725815355072556?s=46" }
       ]
     },
-    shori: {
-      "2026年 8月": [
-        { date: "26.08.20", title: "レコメン初回サンプル", url: "https://x.com/" }
-      ]
-    },
-    shino: {
-      "2026年 8月": [
-        { date: "26.08.18", title: "…＆シノ！サンプル回", url: "https://x.com/" }
-      ]
-    }
+    shori: {},
+    shino: {}
   };
 
-  let radioData = JSON.parse(localStorage.getItem("oshi_radio_data_v2")) || defaultData;
+  let radioData = JSON.parse(localStorage.getItem("oshi_radio_data_v4")) || defaultData;
 
   function saveData() {
-    localStorage.setItem("oshi_radio_data_v2", JSON.stringify(radioData));
+    localStorage.setItem("oshi_radio_data_v4", JSON.stringify(radioData));
   }
 
   function renderAll() {
@@ -435,6 +492,11 @@
       const sectionEl = document.getElementById("section-" + target);
       const months = radioData[target] || {};
       
+      if (Object.keys(months).length === 0) {
+        sectionEl.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:40px; font-family:'Playfair Display', serif; font-style:italic;">No records yet</div>`;
+        return;
+      }
+
       let html = "";
       for (const [ym, items] of Object.entries(months)) {
         html += `<details open><summary>${ym}</summary>`;
@@ -458,7 +520,7 @@
     });
   }
 
-  let isAdmin = sessionStorage.getItem("oshi_radio_admin") === "true";
+  let isAdmin = sessionStorage.getItem("oshi_radio_admin_v4") === "true";
 
   function updateAdminUI() {
     const body = document.getElementById("body-root");
@@ -475,7 +537,6 @@
     const btn = document.getElementById("refresh-btn");
     btn.classList.add("rotating");
     
-    // 0.6秒後に再読み込み（キャッシュを回避するパラメータ付き）
     setTimeout(() => {
       window.location.href = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
     }, 500);
@@ -504,7 +565,7 @@
       const pwd = prompt("管理者パスワードを入力してください：");
       if (pwd === "fuma123") {
         isAdmin = true;
-        sessionStorage.setItem("oshi_radio_admin", "true");
+        sessionStorage.setItem("oshi_radio_admin_v4", "true");
         updateAdminUI();
         alert("管理者モードを有効化しました");
       } else if (pwd !== null) {
@@ -515,12 +576,12 @@
 
   function logoutAdmin() {
     isAdmin = false;
-    sessionStorage.removeItem("oshi_radio_admin");
+    sessionStorage.removeItem("oshi_radio_admin_v4");
     updateAdminUI();
     alert("ログアウトしました");
   }
 
-  function switchTab(targetSection, element) {
+  function switchMainTab(targetSection, element) {
     document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
     element.classList.add("active");
 
